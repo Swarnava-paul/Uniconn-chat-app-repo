@@ -444,7 +444,7 @@ const SignUp = () => {
           </div>
         </form>
         <p className="text-center text-sm">
-          Already have an account?{" "}
+          Already have an account?
           <Link to="/login" className="text-blue-500">
             Sign In
           </Link>

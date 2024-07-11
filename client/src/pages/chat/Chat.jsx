@@ -40,7 +40,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (user) {
-      const socket = io("https://uniconn-chat-app-repo.onrender.com/api/v1/", {
+      const socket = io("https://uniconn-chat-app-repo.onrender.com", {
         query: { userId: user._id },
       });
       setSocket(socket);
