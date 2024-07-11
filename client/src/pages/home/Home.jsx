@@ -16,7 +16,7 @@ const Home = () => {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/v1/user?page=${mentorpage}&limit=${mentorlimit}`
+          `https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/user?page=${mentorpage}&limit=${mentorlimit}`
         );
         const data = await res.json();
         setMentors(data.users);
@@ -29,7 +29,7 @@ const Home = () => {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:3000/api/v1/colleges?page=${collegepage}&limit=${collegelimit}`
+          `https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/colleges?page=${collegepage}&limit=${collegelimit}`
         );
         const data = await res.json();
         setColleges(data.colleges);

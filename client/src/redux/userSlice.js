@@ -10,14 +10,17 @@ export const fetchUserByLoginDetails = createAsyncThunk(
   "users/fetchUserByLoginDetails",
   async ({ email, password }) => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {
@@ -39,9 +42,12 @@ export const checkAuthStatus = createAsyncThunk(
   "users/checkAuthStatus",
   async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/check", {
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/auth/check",
+        {
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       return data.user;
     } catch (error) {
@@ -52,9 +58,12 @@ export const checkAuthStatus = createAsyncThunk(
 
 export const logout = createAsyncThunk("users/logout", async () => {
   try {
-    const response = await fetch("http://localhost:3000/api/v1/auth/logout", {
-      credentials: "include",
-    });
+    const response = await fetch(
+      "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/auth/logout",
+      {
+        credentials: "include",
+      }
+    );
     const data = await response.json();
     if (response.ok) {
       toast.success("logged out successfully 😥");
