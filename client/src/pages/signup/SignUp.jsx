@@ -168,7 +168,7 @@ const SignUp = () => {
 
         // Handle form submission logic here, e.g., send the data to your server
         const response = await fetch(
-          "http://localhost:3000/api/v1/auth/register",
+          "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/register",
           {
             method: "POST",
             headers: {

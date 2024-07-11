@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Card = ({ image, name, CourseOfStream, Department, place, about }) => {
-  console.log(image);
   return (
     <div className="flex flex-col p-4 gap-5 border border-gray-200 min-h-96 w-[20rem]  justify-center shadow-xl rounded-xl">
       <div className="flex flex-col justify-center  items-center">
