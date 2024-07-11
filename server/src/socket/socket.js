@@ -10,15 +10,26 @@ const io = new Server(httpServer, {
   },
 });
 
-let onlineUsers = {}; //{userId:socketID}
+export const getReceiverSocketId = (receiverId) => {
+  return userSocketMap[receiverId];
+};
+
+let userSocketMap = {}; //{userId:socketID}
 
 io.on("connection", (socket) => {
   console.log("new connection", socket.id);
+  const userId = socket.handshake.query.userId;
 
-  socket.on("getOnlineUsers", () => {});
+  if (userId != undefined) {
+    userSocketMap[userId] = socket.id;
+  }
+
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 

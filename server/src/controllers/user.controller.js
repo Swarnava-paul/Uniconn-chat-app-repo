@@ -6,65 +6,21 @@ export const fetchUserChatsforSideBar = async (req, res) => {
   try {
     const userId = new mongoose.Types.ObjectId(req.user.id);
 
-    const conversations = await Conversation.aggregate([
-      {
-        $match: {
-          participants: userId,
+    const conversations = await Conversation.find({
+      participants: { $in: [userId] },
+    })
+      .populate({
+        path: "participants",
+        match: { _id: { $ne: userId } }, // Exclude the current user from participants
+        select: "name", // Select only the name of the participant
+      })
+      .populate({
+        path: "lastMessage",
+        populate: {
+          path: "senderId",
+          select: "name", // Select the name of the sender
         },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "participants",
-          foreignField: "_id",
-          as: "participants",
-        },
-      },
-      {
-        $lookup: {
-          from: "messages",
-          localField: "lastMessage",
-          foreignField: "_id",
-          as: "lastMessage",
-        },
-      },
-      {
-        $unwind: {
-          path: "$lastMessage",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $addFields: {
-          participants: {
-            $filter: {
-              input: "$participants",
-              as: "participant",
-              cond: { $ne: ["$$participant._id", userId] },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          participants: {
-            $map: {
-              input: "$participants",
-              as: "participant",
-              in: { name: "$$participant.name" },
-            },
-          },
-          lastMessage: {
-            message: "$lastMessage.message",
-            createdAt: "$lastMessage.createdAt",
-          },
-          updatedAt: 1, // Include updatedAt for sorting
-        },
-      },
-      {
-        $sort: { updatedAt: -1 },
-      },
-    ]);
+      });
 
     res.status(200).json(conversations);
   } catch (error) {
@@ -74,12 +30,17 @@ export const fetchUserChatsforSideBar = async (req, res) => {
 
 export const fetchUsersWithPagination = async (req, res) => {
   try {
-    const { page = 1, limit = 5 } = req.query;
+    console.log(req.query);
+    const { page = 0, limit = 2 } = req.query;
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
     const users = await User.find()
-      .skip(page * limit)
-      .limit(limit)
+      .skip(pageNumber * limitNumber)
+      .limit(limitNumber)
       .exec();
-    res.status(200).json(users);
+    const TotalCount = await User.countDocuments();
+    const currentPage = page * limit;
+    res.status(200).json({ users, TotalCount });
   } catch (err) {
     return res.status(500).json(err);
   }

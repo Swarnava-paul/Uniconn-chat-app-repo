@@ -1,33 +1,55 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
+import College from "../models/college.model.js";
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
   try {
+    const existedCollege = await College.findOne({
+      name: req.body.college,
+    });
+    let collegeId;
+    if (existedCollege) {
+      collegeId = existedCollege._id;
+    } else {
+      const college = new College({
+        name: req.body.college,
+      });
+      await college.save();
+      collegeId = college._id;
+    }
+
     let user = new User({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
+      place: req.body.place,
       phone: req.body.phone,
-      college: req.body.college,
-      about: req.body.about,
-      Education: req.body.Education,
-      CourseofStream: req.body.CourseofStream,
+      college: collegeId,
       Department: req.body.Department,
-      profilePic: req.body.profilePic || "",
+      CourseofStream: req.body.CourseOfStream,
+      about: req.body.about,
+      profilePic: req.body.profilePic || undefined,
     });
-    user = await user.save().select("-password -refreshToken");
+    const saveduser = await user.save();
 
-    if (!user) return res.status(400).send("the user cannot be created !!!");
+    // Select fields to send in response
+    const responseUser = await User.findById(saveduser._id).select(
+      "-password -refreshToken"
+    );
+
+    if (!saveduser)
+      return res.status(400).send("the user cannot be created !!!");
 
     res.status(200).json({
       success: true,
-      data: user,
+      data: responseUser,
       message: "User created successfully",
     });
   } catch (error) {
-    return res.status(500).json({ error });
+    return res.status(500).json(error.message);
   }
 };
 

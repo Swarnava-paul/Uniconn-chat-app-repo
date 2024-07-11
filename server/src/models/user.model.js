@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    place: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
       required: true,
@@ -27,28 +31,24 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     college: {
-      type: String,
-      required: true,
-    },
-    Education: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "College",
       required: true,
     },
     CourseofStream: {
       type: String,
       required: true,
       trim: true,
-      lowercase: true,
     },
     Department: {
       type: String,
       required: true,
       trim: true,
-      lowercase: true,
     },
     profilePic: {
       type: String,
-      default: "",
+      default:
+        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
     refreshToken: {
       type: String,

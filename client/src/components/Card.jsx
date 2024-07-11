@@ -1,22 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Card = () => {
+const Card = ({ image, name, CourseOfStream, Department, place, about }) => {
+  console.log(image);
   return (
-    <div className="flex flex-col p-4 gap-2 border border-gray-200 min-h-96 w-[20rem] justify-center shadow-xl rounded-xl">
-      <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col p-4 gap-5 border border-gray-200 min-h-96 w-[20rem]  justify-center shadow-xl rounded-xl">
+      <div className="flex flex-col justify-center  items-center">
         <div className="w-[8.5rem] h-[8.5rem] rounded-full flex justify-center items-center bg-[#8E69FF]">
-          <div className="w-[8rem] h-[8rem] rounded-full overflow-hidden bg-white p-1">
+          <div className="w-[8rem] h-[8rem] rounded-full :overflow-hidden bg-white p-1">
             <img
-              src="https://wallpapers.com/images/featured/link-pictures-16mi3e7v5hxno9c4.jpg"
+              src={image}
               className="object-cover w-full h-full rounded-full"
               alt="image"
             />
           </div>
         </div>
-        <div className="text-xl flex flex-wrap">name</div>
-        <div className="bg-[#a58af7] py-1 px-5 text-xl rounded-2xl flex justify-center flex-wrap items-center text-[#EDEAFF]">
-          Forencis
+        <div className="text-xl flex flex-wrap">{name}</div>
+        <div className="bg-[#a58af7] py-1 px-5 text-[1.1rem] rounded-2xl flex justify-center flex-wrap items-center text-[#EDEAFF]">
+          {Department}
         </div>
       </div>
       <div className="flex flex-col gap-3">
@@ -24,20 +25,20 @@ const Card = () => {
           <div>
             <b>I COME FROM</b>
           </div>
-          <div>Utah</div>
+          <div>{place}</div>
         </div>
         <div className="flex flex-col gap-1">
           <div>
             <b>MAJOR</b>
           </div>
-          <div>BSC Computer Science</div>
+          <div>{CourseOfStream}</div>
         </div>
         <div className="flex flex-col gap-1">
           <div>
             <b>ABOUT</b>
           </div>
           <div>
-            hii, my name is erin , hi kjskji jk iam studying in btech all inoen.
+            {about}
             <span>
               <Link to="/" className="text-blue-700 underline">
                 readmore....
@@ -47,7 +48,7 @@ const Card = () => {
         </div>
       </div>
       <div className="">
-        <div className="bg-[#8E69FF] p-3 flex flex-row gap-2 justify-center text-white items-center rounded-xl font-bold text-xl">
+        <div className="bg-[#8E69FF] p-3 flex flex-row gap-2 justify-center text-white items-center rounded-xl font-bold text-xl hover:cursor-pointer">
           <Link to="/chat"> Ask me a question</Link>
           <svg
             xmlns="http://www.w3.org/2000/svg"
