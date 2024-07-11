@@ -12,7 +12,10 @@ import { app, httpServer } from "./socket/socket.js";
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://uniconn-chat-app-repo.vercel.app",
+    ],
     credentials: true,
   })
 );
