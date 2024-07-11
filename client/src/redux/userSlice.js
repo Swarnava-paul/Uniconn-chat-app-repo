@@ -11,7 +11,7 @@ export const fetchUserByLoginDetails = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const response = await fetch(
-        "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/auth/login",
+        "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/login",
         {
           method: "POST",
           headers: {
@@ -43,7 +43,7 @@ export const checkAuthStatus = createAsyncThunk(
   async () => {
     try {
       const response = await fetch(
-        "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/auth/check",
+        "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/check",
         {
           credentials: "include",
         }
@@ -59,7 +59,7 @@ export const checkAuthStatus = createAsyncThunk(
 export const logout = createAsyncThunk("users/logout", async () => {
   try {
     const response = await fetch(
-      "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/auth/logout",
+      "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/logout",
       {
         credentials: "include",
       }
@@ -68,6 +68,7 @@ export const logout = createAsyncThunk("users/logout", async () => {
     if (response.ok) {
       toast.success("logged out successfully 😥");
     }
+    s;
   } catch (error) {
     console.log(error);
   }
