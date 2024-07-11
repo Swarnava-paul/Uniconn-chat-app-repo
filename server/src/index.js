@@ -10,10 +10,8 @@ import userRoutes from "../src/routes/user.routes.js";
 import collegeRoutes from "../src/routes/college.routes.js";
 import { app, httpServer } from "./socket/socket.js";
 
-app.use(
-  cors({
-    origin:
-      "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app",
+app.use(cors({
+    origin:'https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app',
     credentials: true,
   })
 );
