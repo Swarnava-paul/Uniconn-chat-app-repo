@@ -6,7 +6,9 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: [
+      "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app",
+    ],
   },
 });
 
