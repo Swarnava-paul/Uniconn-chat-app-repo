@@ -20,7 +20,7 @@ const Chat = () => {
     const fetchChats = async () => {
       try {
         const response = await fetch(
-          "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/user/chat",
+          "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/user/chat",
           {
             credentials: "include",
           }
@@ -41,7 +41,7 @@ const Chat = () => {
   useEffect(() => {
     if (user) {
       const socket = io(
-        "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app",
+        "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app",
         {
           query: { userId: user._id },
         }
@@ -77,7 +77,7 @@ const Chat = () => {
     console.log("Fetching messages for chat:", receiverid);
     try {
       const response = await fetch(
-        `https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/messages/get/${receiverid}`,
+        `https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/messages/get/${receiverid}`,
         {
           credentials: "include",
         }
@@ -97,7 +97,7 @@ const Chat = () => {
     setsendMessageLoading(true);
     try {
       const res = await fetch(
-        `https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/messages/send/${selectedConversation}`,
+        `https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/messages/send/${selectedConversation}`,
         {
           method: "POST",
           headers: {

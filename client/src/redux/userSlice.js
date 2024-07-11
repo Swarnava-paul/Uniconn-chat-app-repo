@@ -11,7 +11,7 @@ export const fetchUserByLoginDetails = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const response = await fetch(
-        "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/auth/login",
+        "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/auth/login",
         {
           method: "POST",
           headers: {
@@ -43,7 +43,7 @@ export const checkAuthStatus = createAsyncThunk(
   async () => {
     try {
       const response = await fetch(
-        "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/auth/check",
+        "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/auth/check",
         {
           credentials: "include",
         }
@@ -59,7 +59,7 @@ export const checkAuthStatus = createAsyncThunk(
 export const logout = createAsyncThunk("users/logout", async () => {
   try {
     const response = await fetch(
-      "https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/auth/logout",
+      "https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/auth/logout",
       {
         credentials: "include",
       }

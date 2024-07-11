@@ -32,7 +32,7 @@ const Navbar = () => {
       console.log(e.target.value);
       const controller = new AbortController();
       const response = await fetch(
-        `https://uniconn-chat-app-repo-dw8d5g67b-kalkeshwars-projects.vercel.app/colleges/search-college?search=${e.target.value}`,
+        `https://uniconn-chat-app-repo-ragnkphyu-kalkeshwars-projects.vercel.app/colleges/search-college?search=${e.target.value}`,
         { signal: controller.signal, credentials: "include" }
       );
       const data = await response.json();
