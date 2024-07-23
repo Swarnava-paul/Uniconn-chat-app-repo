@@ -42,7 +42,8 @@ const Chat = () => {
   useEffect(() => {
     if (!user) return;
 
-    const socketInstance = io("ws://uniconn-chat-app-repo.onrender.com", {
+    const socketInstance = io("wss://uniconn-chat-app-repo.onrender.com", {
+      secure: true,
       query: { userId: user._id },
     });
 
@@ -72,7 +73,7 @@ const Chat = () => {
         const data = await response.json();
         setMessages(data);
 
-        const chat = chats.find(
+        const chat = chats?.find(
           (chat) => chat.participants[0]._id === mentorId
         );
         if (!chat) {
@@ -143,7 +144,7 @@ const Chat = () => {
     }
   };
 
-  const selectedChat = chats.find(
+  const selectedChat = chats?.find(
     (chat) => chat.participants[0]._id === mentorId
   );
   const mentorProfilePic =

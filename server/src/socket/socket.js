@@ -5,12 +5,16 @@ import http from "http";
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
+  path: "/socket",
+  wssEngine: ["ws", "wss"],
+  transports: ["websocket", "polling"],
   cors: {
     origin: [
       "http://localhost:5173",
       "https://uniconn-chat-app-repo.vercel.app",
     ],
   },
+  allowEIO3: true,
 });
 
 export const getReceiverSocketId = (receiverId) => {
