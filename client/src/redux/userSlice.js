@@ -11,7 +11,7 @@ export const fetchUserByLoginDetails = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const response = await fetch(
-        "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/login",
+        `${process.env.VITE_BACKEND_URL}/api/v1/auth/login`,
         {
           method: "POST",
           headers: {
@@ -22,14 +22,16 @@ export const fetchUserByLoginDetails = createAsyncThunk(
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null); // Catch JSON parsing errors
+
       if (response.ok) {
-        toast.success("successfully loggedIn", {
+        toast.success("Successfully logged in", {
           duration: 4000,
         });
-        return data.data;
-      } else if (response.status == 401) {
-        toast.error(data?.message);
+        return data?.data;
+      } else {
+        toast.error(data?.message || "An error occurred");
+        return null;
       }
     } catch (error) {
       toast.error(error.message);
@@ -43,13 +45,13 @@ export const checkAuthStatus = createAsyncThunk(
   async () => {
     try {
       const response = await fetch(
-        "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/check",
+        `${process.env.VITE_BACKEND_URL}/api/v1/auth/check`,
         {
           credentials: "include",
         }
       );
-      const data = await response.json();
-      return data.user;
+      const data = await response.json().catch(() => null); // Catch JSON parsing errors
+      return data?.user;
     } catch (error) {
       console.log(error);
     }
@@ -59,16 +61,16 @@ export const checkAuthStatus = createAsyncThunk(
 export const logout = createAsyncThunk("users/logout", async () => {
   try {
     const response = await fetch(
-      "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/logout",
+      `${process.env.VITE_BACKEND_URL}/api/v1/auth/logout`,
       {
         credentials: "include",
       }
     );
-    const data = await response.json();
+    const data = await response.json().catch(() => null); // Catch JSON parsing errors
     if (response.ok) {
-      toast.success("logged out successfully 😥");
+      toast.success("Logged out successfully 😥");
     }
-    s;
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -80,7 +82,6 @@ export const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchUserByLoginDetails.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.user = action?.payload;
       state.loading = false;
     });
@@ -93,7 +94,7 @@ export const userSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(checkAuthStatus.fulfilled, (state, action) => {
-      state.user = action.payload;
+      state.user = action?.payload;
       state.loading = false;
     });
     builder.addCase(checkAuthStatus.pending, (state) => {

@@ -1,201 +1,303 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import LeftChat from "../../components/LeftChat";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { io } from "socket.io-client";
+import LeftChat from "../../components/LeftChat";
+import { setMentorId, clearMentorId } from "../../redux/chatSlice";
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [sendMessageLoading, setsendMessageLoading] = useState(false);
-  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [sendMessageLoading, setSendMessageLoading] = useState(false);
+  const [loadingChats, setLoadingChats] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(true);
+  const { mentorId } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
-  const navigate = useNavigate();
-  const [socket, setSocket] = useState(null);
-  const [onlineUsers, setOnlineUser] = useState([]);
-  const isOnline = onlineUsers.includes(selectedConversation);
+  const dispatch = useDispatch();
+  const messagesEndRef = useRef(null);
+  const leftChatRef = useRef(null);
+  const chatListRef = useRef(null);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await fetch(
-          "https://uniconn-chat-app-repo.onrender.com/api/v1//user/chat",
-          {
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
-        console.log("response", data);
-        setChats(data);
-      } catch (error) {
-        console.error("Error fetching chats:", error);
-      }
-    };
-
-    if (user) {
-      fetchChats();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      const socket = io("https://uniconn-chat-app-repo.onrender.com", {
-        query: { userId: user._id },
-      });
-      setSocket(socket);
-
-      socket.on("getOnlineUsers", (users) => {
-        setOnlineUser(users);
-      });
-
-      return () => {
-        socket.close();
-        setSocket(null);
-      };
-    } else {
-      if (socket) {
-        socket.close();
-        setSocket(null);
-      }
-    }
-  }, [user]);
-
-  useEffect(() => {
-    socket?.on("newMessage", (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
-    });
-    return () => {
-      socket?.off("newMessage");
-    };
-  }, [messages, socket, setMessages]);
-
-  const handleConversation = async (receiverid) => {
-    console.log("Fetching messages for chat:", receiverid);
+  const fetchChats = useCallback(async () => {
+    setLoadingChats(true);
     try {
       const response = await fetch(
-        `https://uniconn-chat-app-repo.onrender.com/api/v1//messages/get/${receiverid}`,
-        {
-          credentials: "include",
-        }
+        `${process.env.VITE_BACKEND_URL}/api/v1/user/chat`,
+        { credentials: "include" }
       );
       const data = await response.json();
-      console.log("Messages fetched:", data);
-      setMessages(data);
-      setSelectedConversation(receiverid);
+
+      setChats(data);
     } catch (error) {
-      console.error("Error fetching conversation:", error);
+      console.error("Error fetching chats:", error.message);
+    } finally {
+      setLoadingChats(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (user) fetchChats();
+  }, [user, fetchChats]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const socketInstance = io(`${process.env.VITE_BACKEND_URL}`, {
+      query: { userId: user._id },
+    });
+
+    socketInstance.on("newMessage", (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+      scrollToBottom();
+    });
+
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!mentorId) {
+      dispatch(clearMentorId());
+      return;
+    }
+
+    const fetchMessages = async () => {
+      setLoadingMessages(true);
+      try {
+        const response = await fetch(
+          `${process.env.VITE_BACKEND_URL}/api/v1/messages/get/${mentorId}`,
+          { credentials: "include" }
+        );
+        const data = await response.json();
+        setMessages(data);
+
+        const chat = chats.find(
+          (chat) => chat.participants[0]._id === mentorId
+        );
+        if (!chat) {
+          const userInfoResponse = await fetch(
+            `${process.env.VITE_BACKEND_URL}/api/v1/user/${mentorId}`,
+            { credentials: "include" }
+          );
+          const userInfo = await userInfoResponse.json();
+          const newChat = {
+            _id: mentorId,
+            participants: [userInfo.data],
+            lastMessage: data[data.length - 1] || {},
+          };
+          setChats((prev) => [
+            ...prev.filter((c) => c._id !== mentorId),
+            newChat,
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching conversation:", error);
+      } finally {
+        setLoadingMessages(false);
+      }
+    };
+
+    fetchMessages();
+  }, [mentorId, chats, dispatch]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!message) return;
-    setsendMessageLoading(true);
+
+    setSendMessageLoading(true);
+
     try {
-      const res = await fetch(
-        `https://uniconn-chat-app-repo.onrender.com/api/v1/messages/send/${selectedConversation}`,
+      const response = await fetch(
+        `${process.env.VITE_BACKEND_URL}/api/v1/messages/send/${mentorId}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({ text: message }),
         }
       );
-      const data = await res.json();
-
-      setMessages([...messages, data]);
+      const data = await response.json();
+      setMessages((prev) => [...prev, data]);
+      setMessage("");
+      scrollToBottom();
     } catch (error) {
-      // toast.error(error.message);
-      console.log(error.message);
+      console.error("Error sending message:", error.message);
     } finally {
-      setsendMessageLoading(false);
+      setSendMessageLoading(false);
     }
-    setMessage("");
   };
 
-  return (
-    <div>
-      {user ? (
-        <div className="flex flex-row">
-          <div className="lg:w-[30%] md:w-[40%] h-[100vh] flex flex-col relative bg-gray-100">
-            {chats.map((chat) => (
-              <LeftChat
-                key={chat._id}
-                lastMessage={chat.lastMessage.message}
-                name={chat.participants[0].name}
-                onClick={() => handleConversation(chat.participants[0]._id)}
-                isOnline={isOnline}
-              />
-            ))}
-            <div className="absolute top-0 right-0 bg-gray-300 w-1 h-full"></div>
+  const handleBackClick = () => {
+    dispatch(clearMentorId());
+    if (window.innerWidth <= 768) {
+      chatListRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const selectedChat = chats.find(
+    (chat) => chat.participants[0]._id === mentorId
+  );
+  const mentorProfilePic =
+    selectedChat?.participants[0]?.profilePic ||
+    "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg";
+  const mentorName = selectedChat?.participants[0]?.name || "Loading...";
+
+  const renderChats = useCallback(() => {
+    return loadingChats ? (
+      <div className="p-4">
+        {[...Array(6)].map((_, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-4 p-2 mb-2 bg-gray-200 animate-pulse rounded-md"
+          >
+            <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+            <div className="flex-1">
+              <div className="h-4 bg-gray-300 rounded mb-2"></div>
+              <div className="h-3 bg-gray-300 rounded"></div>
+            </div>
           </div>
-          {selectedConversation ? (
-            <div className="flex flex-col justify-between w-[70%] ">
-              <div className="flex flex-col gap-3 p-4 w-[100%]">
-                {messages.length > 0 ? (
-                  messages.map((message) => (
-                    <div
-                      key={message._id}
-                      className={`chat ${
-                        message.senderId === user._id
-                          ? "chat-end"
-                          : "chat-start"
-                      }`}
-                    >
-                      <div className="chat-image avatar">
-                        <div className="w-10 rounded-full">
-                          <img
-                            alt="Avatar"
-                            src={
-                              message.sender === user._id
-                                ? user.avatar
-                                : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                            }
-                          />
+        ))}
+      </div>
+    ) : (
+      chats.map((chat) => (
+        <LeftChat
+          key={chat._id}
+          lastMessage={chat.lastMessage?.message || ""}
+          name={chat.participants[0]?.name || "Loading..."}
+          pic={
+            chat.participants[0]?.profilePic ||
+            "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+          }
+          onClick={() => {
+            dispatch(setMentorId(chat.participants[0]._id));
+            if (window.innerWidth <= 768) {
+              leftChatRef.current?.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+        />
+      ))
+    );
+  }, [chats, dispatch, loadingChats]);
+
+  return (
+    <div className="flex flex-col md:flex-row h-screen">
+      {user ? (
+        <>
+          <div
+            ref={chatListRef}
+            className={`w-full md:w-1/3 bg-gray-100 ${
+              mentorId ? "hidden md:block" : ""
+            }`}
+          >
+            {renderChats()}
+          </div>
+          <div
+            ref={leftChatRef}
+            className={`w-full md:w-2/3 ${mentorId ? "" : "hidden"}`}
+          >
+            {mentorId ? (
+              <>
+                <div className="flex items-center p-4 bg-gray-200 border-b border-gray-300">
+                  <button
+                    className="mr-4 text-blue-500 md:hidden"
+                    onClick={handleBackClick}
+                  >
+                    Back
+                  </button>
+                  <img
+                    className="w-10 h-10 rounded-full mr-4"
+                    src={mentorProfilePic}
+                    alt="Profile"
+                  />
+                  <h2 className="text-lg font-semibold">{mentorName}</h2>
+                </div>
+                <div className="flex flex-col gap-3 p-4 overflow-y-auto h-[calc(100vh-150px)] no-scrollbar">
+                  {loadingMessages ? (
+                    <div className="p-4">
+                      {[...Array(6)].map((_, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-4 p-2 mb-2 bg-gray-200 animate-pulse rounded-md"
+                        >
+                          <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+                          <div className="flex-1">
+                            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                            <div className="h-3 bg-gray-300 rounded"></div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="chat-bubble">{message.message}</div>
+                      ))}
                     </div>
-                  ))
-                ) : (
-                  <p>No messages in this conversation.</p>
-                )}
-              </div>
-              <div>
-                <form className="px-4 my-3" onSubmit={handleSendMessage}>
-                  <div className="w-full relative">
+                  ) : messages.length > 0 ? (
+                    messages.map((msg) => (
+                      <div
+                        key={msg._id}
+                        className={`chat ${
+                          msg.senderId === user._id ? "chat-end" : "chat-start"
+                        }`}
+                      >
+                        <div className="chat-image avatar">
+                          <div className="w-10 rounded-full">
+                            <img
+                              alt="Avatar"
+                              src={
+                                msg.senderId === user._id
+                                  ? user.profilePic
+                                  : selectedChat?.participants[0]?.profilePic ||
+                                    "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="chat-bubble">{msg.message}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No messages in this conversation.</p>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+                <div className="p-4 border-t border-gray-300">
+                  <form className="flex" onSubmit={handleSendMessage}>
                     <input
                       type="text"
-                      className="border text-sm rounded-lg block w-full p-2.5  bg-gray-700 border-gray-600 text-white"
+                      className="flex-grow border text-sm rounded-lg p-2.5 bg-gray-700 border-gray-600 text-white"
                       placeholder="Send a message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                     />
                     <button
                       type="submit"
-                      className="absolute inset-y-0 end-0 flex items-center pe-3  text-white"
+                      className="ml-4 text-white bg-blue-500 hover:bg-blue-700 rounded-lg px-4 py-2"
                     >
                       {sendMessageLoading ? (
                         <div className="loading loading-spinner"></div>
                       ) : (
-                        <p>Send</p>
+                        "Send"
                       )}
                     </button>
-                  </div>
-                </form>
+                  </form>
+                </div>
+              </>
+            ) : (
+              <div className="w-full p-4 text-center">
+                Select a mentor to start chatting
               </div>
-            </div>
-          ) : (
-            <p>Select a conversation to see the chats.</p>
-          )}
-        </div>
+            )}
+          </div>
+        </>
       ) : (
-        <p onClick={() => navigate("/login")}>
-          Please login to see your chats.
-        </p>
+        <div className="w-full text-center p-4">
+          Please log in to view your chats.
+        </div>
       )}
     </div>
   );

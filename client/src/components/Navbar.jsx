@@ -32,12 +32,11 @@ const Navbar = () => {
       console.log(e.target.value);
       const controller = new AbortController();
       const response = await fetch(
-        `https://uniconn-chat-app-repo.onrender.com/api/v1/colleges/search-college?search=${e.target.value}`,
+        `${process.env.VITE_BACKEND_URL}/api/v1/colleges/search-college?search=${e.target.value}`,
         { signal: controller.signal, credentials: "include" }
       );
       const data = await response.json();
       setSearchResults(data || []);
-      console.log(data);
     } catch (error) {
       console.log(error.message);
       setSearchResults([]); // In case of error, set searchResults to an empty array
@@ -77,11 +76,12 @@ const Navbar = () => {
 
   return (
     <div className="w-full flex flex-row">
-      <div className="navbar bg-gray-300 px-5 py-1 relative">
-        <div className="navbar-start">
+      <div className="navbar w-full bg-gray-300 px-5 py-1 pr-5 gap-1 relative">
+        <div className="navbar-start min-w-10">
           <img src="/images/Logo.svg" alt="logo" />
         </div>
-        <div className="navbar-center flex items-center min-w-[30rem] mx-auto relative">
+
+        <div className="navbar-center flex items-center w-[60%] max-w-[30rem] mx-auto relative">
           <label htmlFor="simple-search" className="sr-only">
             Search
           </label>

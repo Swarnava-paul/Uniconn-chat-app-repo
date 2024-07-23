@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -168,7 +169,7 @@ const SignUp = () => {
 
         // Handle form submission logic here, e.g., send the data to your server
         const response = await fetch(
-          "https://uniconn-chat-app-repo.onrender.com/api/v1/auth/register",
+          `${process.env.VITE_BACKEND_URL}/api/v1/auth/register`,
           {
             method: "POST",
             headers: {
@@ -179,7 +180,6 @@ const SignUp = () => {
           }
         );
         const resdata = await response.json();
-        console.log("responsedata:", resdata);
         if (response.status == 200) {
           // Reset form after submission (if needed)
           setFormData({
@@ -298,15 +298,48 @@ const SignUp = () => {
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Password
             </label>
-            <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                formErrors.password ? "border-red-500" : ""
-              }`}
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
+            <div className="relative">
+              <input
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                  formErrors.password ? "border-red-500" : ""
+                }`}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showPassword ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M4 8V6a6 6 0 1 1 12 0h-3v2h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0M7 6v2h6V6a3 3 0 0 0-6 0"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M4 8V6a6 6 0 1 1 12 0v2h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2zm5 6.73V17h2v-2.27a2 2 0 1 0-2 0M7 6v2h6V6a3 3 0 0 0-6 0"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
             {formErrors.password && (
               <p className="text-red-500 text-xs italic">
                 {formErrors.password}

@@ -17,7 +17,7 @@ export const createcollege = async (req, res) => {
     const place = req.body.place;
     const Department = req.body.Department;
     const CourseofStream = req.body.CourseofStream;
-    const college = await new College({
+    const college = new College({
       name,
       place,
       Department,

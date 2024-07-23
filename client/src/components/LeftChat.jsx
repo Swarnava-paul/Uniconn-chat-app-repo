@@ -1,17 +1,13 @@
 import React from "react";
 
-const LeftChat = (props) => {
-  const { name, lastMessage, onClick, isOnline } = props;
+const LeftChat = ({ name, lastMessage, onClick, pic, isOnline }) => {
   return (
     <div
-      className="flex flex-row h-20  gap-1 border border-1 border-gray-300 w-full cursor-pointer bg-white hover:bg-green-100"
+      className="flex flex-row h-20 gap-1 border border-1 border-gray-300 w-full cursor-pointer bg-white hover:bg-green-100"
       onClick={onClick}
     >
       <div className="w-[20%] relative flex justify-center items-center p-2">
-        <img
-          src="https://wallpapers.com/images/featured/link-pictures-16mi3e7v5hxno9c4.jpg"
-          className="rounded-[50%] w-full h-full object-cover "
-        />
+        <img src={pic} className="rounded-[50%] w-full h-full object-cover " />
         {isOnline && (
           <div
             className={`badge badge-success badge-xs absolute right-3 bottom-2`}
@@ -26,7 +22,6 @@ const LeftChat = (props) => {
           {lastMessage}
         </div>
       </div>
-      <div></div>
     </div>
   );
 };
