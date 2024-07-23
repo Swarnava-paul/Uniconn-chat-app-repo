@@ -42,7 +42,7 @@ const Chat = () => {
   useEffect(() => {
     if (!user) return;
 
-    const socketInstance = io(`wss://uniconn-chat-app-repo.onrender.com`, {
+    const socketInstance = io("ws://uniconn-chat-app-repo.onrender.com", {
       query: { userId: user._id },
     });
 
