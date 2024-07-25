@@ -6,7 +6,6 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   path: "/socket",
-  wssEngine: ["ws", "wss"],
   transports: ["websocket", "polling"],
   cors: {
     origin: [
