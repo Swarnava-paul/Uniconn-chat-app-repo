@@ -5,9 +5,7 @@ const verifyToken = async (req, res, next) => {
   try {
     const token =
       req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
-    console.log("token", token);
-    console.log("cookies", req.cookies);
-    console.log("accessToken", req.cookies.accessToken);
+    console.log(token);
 
     if (!token) {
       return res
