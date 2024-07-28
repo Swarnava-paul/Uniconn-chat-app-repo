@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Card from "../../components/Card";
+import toast from "react-hot-toast";
 
 const CollegeUserPage = () => {
   const [page, setPage] = useState(0);
@@ -19,7 +20,9 @@ const CollegeUserPage = () => {
           { credentials: "include" }
         );
         const data = await res.json();
-        console.log(data);
+        if (res.status == 404) {
+          toast.error(data.message);
+        }
         setLoading(false);
         setMentors(data?.data);
         setTotal(data.totalCount); // ensure this is correctly set

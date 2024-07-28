@@ -6,9 +6,9 @@ import { logout } from "../redux/userSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, message } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([{ name: "snist" }]);
+  const [searchResults, setSearchResults] = useState([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchRef = useRef(null);
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Navbar = () => {
     try {
       dispatch(logout());
       if (!user) {
-        toast.success(`You are logged out !😥`, {
+        toast.success(`You are logged out! 😥`, {
           duration: 5000,
         });
       }
@@ -26,17 +26,26 @@ const Navbar = () => {
     }
   };
 
-  const handleSearch = () => {
-    navigate(`/user/search/${searchTerm}`);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/user/search/${searchTerm}`);
+    } else {
+      toast.error("Please enter a search term");
+    }
   };
 
   const handleInputChangeAndFetchCollege = async (e) => {
     try {
-      setSearchTerm(e.target.value);
-      console.log(e.target.value);
+      const value = e.target.value;
+      setSearchTerm(value);
+      if (!value.trim()) {
+        setSearchResults([]);
+        return;
+      }
       const controller = new AbortController();
       const response = await fetch(
-        `${process.env.VITE_BACKEND_URL}/api/v1/colleges/search-college?search=${e.target.value}`,
+        `${process.env.VITE_BACKEND_URL}/api/v1/colleges/search-college?search=${value}`,
         { signal: controller.signal, credentials: "include" }
       );
       const data = await response.json();
@@ -50,7 +59,6 @@ const Navbar = () => {
   const handleResultClick = (college) => {
     setSearchTerm(college.name); // Update input value with selected college name
     setIsSearchFocused(false); // Close the dropdown
-    // navigate(`/college/${college.id}`); // Navigate to the selected college page (if needed)
   };
 
   const handleResultHover = (college) => {
@@ -59,10 +67,6 @@ const Navbar = () => {
 
   const handleInputFocus = () => {
     setIsSearchFocused(true);
-  };
-
-  const handleInputBlur = () => {
-    setIsSearchFocused(false);
   };
 
   const handleClickOutside = (e) => {
@@ -81,11 +85,10 @@ const Navbar = () => {
   return (
     <div className="w-full flex flex-row">
       <div className="navbar w-full bg-gray-300 px-5 py-1 pr-5 gap-1 relative">
-        <div className="navbar-start min-w-10">
+        <div className="navbar-start vsm:hidden md:flex md:min-w-10">
           <img src="/images/Logo.svg" alt="logo" />
         </div>
-
-        <div className="navbar-center flex items-center w-[60%] max-w-[30rem] mx-auto relative">
+        <div className="navbar-center flex items-center w-[70%] max-w-[30rem] mx-auto relative">
           <label htmlFor="simple-search" className="sr-only">
             Search
           </label>
@@ -146,10 +149,9 @@ const Navbar = () => {
               required
               onChange={handleInputChangeAndFetchCollege}
               onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
               value={searchTerm}
             />
-            {isSearchFocused && searchResults && searchResults.length > 0 && (
+            {isSearchFocused && searchResults.length > 0 && (
               <ul className="absolute left-0 bg-white border border-gray-300 w-full mt-2 rounded-lg shadow-lg z-10 text-black max-h-60 overflow-y-auto">
                 {searchResults.map((college) => (
                   <li
@@ -186,21 +188,24 @@ const Navbar = () => {
             <span className="sr-only">Search</span>
           </button>
         </div>
-        <div className="navbar-end">
+
+        <div className="navbar-end flex justify-center items-center">
           {user ? (
             <button
-              className="border border-black rounded-xl p-1 shadow-2xl"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
               onClick={handleLogout}
             >
               Logout
             </button>
           ) : (
-            <button
-              className="border border-black rounded-xl p-1 shadow-2xl"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+            </div>
           )}
         </div>
       </div>

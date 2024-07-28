@@ -43,10 +43,7 @@ function App() {
         />
         <Route path="/colleges" element={<AllColleges />} />
         <Route path="/mentors" element={<AllMentors />} />
-        <Route
-          path="/user/search/:name"
-          element={user ? <Navigate to="/" /> : <CollegeUserPage />}
-        />
+        <Route path="/user/search/:name" element={<CollegeUserPage />} />
       </Routes>
       <Toaster />
     </div>

@@ -9,6 +9,7 @@ import messageRoutes from "../src/routes/message.routes.js";
 import userRoutes from "../src/routes/user.routes.js";
 import collegeRoutes from "../src/routes/college.routes.js";
 import { app, httpServer } from "./socket/socket.js";
+import path from "path";
 
 app.use(
   cors({
@@ -30,6 +31,22 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/messages", messageRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/colleges", collegeRoutes);
+
+// -----------------------Deployment-----------------------------------
+
+const __dirname = path.resolve();
+console.log(__dirname);
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "..", "client", "dist", "index.html"));
+//   });
+// } else {
+//   app.get("/", (req, res) => {
+//     res.send("Api is running");
+//   });
+// }
 
 connectDB();
 

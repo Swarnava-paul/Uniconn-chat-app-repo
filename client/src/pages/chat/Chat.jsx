@@ -13,6 +13,8 @@ const Chat = () => {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const { mentorId } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [socket, setSocket] = useState(null);
   const dispatch = useDispatch();
   const messagesEndRef = useRef(null);
   const leftChatRef = useRef(null);
@@ -40,27 +42,49 @@ const Chat = () => {
   }, [user, fetchChats]);
 
   useEffect(() => {
-    if (!user) {
-      console.log("no user");
+    if (user) {
+      const socketInstance = io(`${process.env.VITE_BACKEND_URL}`, {
+        path: "/socket",
+        transports: ["websocket", "polling"],
+        secure: true,
+        query: { userId: user._id },
+      });
+      setSocket(socketInstance);
+      socketInstance.on("getOnlineUsers", (users) => {
+        setOnlineUsers(users);
+      });
+
+      return () => {
+        socketInstance.disconnect();
+        setSocket(null);
+      };
+    } else if (socket) {
+      socket.disconnect();
+      setSocket(null);
+      return;
+    } else {
+      console.log("no user and no socket");
       return;
     }
-
-    const socketInstance = io(`${process.env.VITE_BACKEND_URL}`, {
-      path: "/socket",
-      transports: ["websocket", "polling"],
-      secure: true,
-      query: { userId: user._id },
-    });
-    console.log("socket", socketInstance);
-    socketInstance.on("newMessage", (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
-      scrollToBottom();
-    });
-
-    return () => {
-      socketInstance.disconnect();
-    };
   }, [user]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("newMessage", (newMessage) => {
+        setMessages((prev) => [...prev, newMessage]);
+        scrollToBottom();
+      });
+
+      socket.on("getOnlineUsers", (users) => {
+        setOnlineUsers(users);
+      });
+
+      return () => {
+        socket.off("newMessage");
+        socket.off("getOnlineUsers");
+      };
+    }
+  }, [socket]);
 
   useEffect(() => {
     if (!mentorId) {
@@ -190,10 +214,11 @@ const Chat = () => {
               leftChatRef.current?.scrollIntoView({ behavior: "smooth" });
             }
           }}
+          isOnline={onlineUsers.includes(chat.participants[0]._id)}
         />
       ))
     );
-  }, [chats, dispatch, loadingChats]);
+  }, [chats, dispatch, loadingChats, onlineUsers]);
 
   return (
     <div className="flex flex-col md:flex-row h-screen">
@@ -247,63 +272,51 @@ const Chat = () => {
                     messages.map((msg) => (
                       <div
                         key={msg._id}
-                        className={`chat ${
-                          msg.senderId === user._id ? "chat-end" : "chat-start"
+                        className={`p-2 rounded-md ${
+                          msg.sender === user._id
+                            ? "bg-blue-500 text-white self-end"
+                            : "bg-gray-200 self-start"
                         }`}
                       >
-                        <div className="chat-image avatar">
-                          <div className="w-10 rounded-full">
-                            <img
-                              alt="Avatar"
-                              src={
-                                msg.senderId === user._id
-                                  ? user.profilePic
-                                  : selectedChat?.participants[0]?.profilePic ||
-                                    "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className="chat-bubble">{msg.message}</div>
+                        {msg.text}
                       </div>
                     ))
                   ) : (
-                    <p>No messages in this conversation.</p>
+                    <div className="text-center text-gray-500">
+                      No messages yet.
+                    </div>
                   )}
-                  <div ref={messagesEndRef} />
+                  <div ref={messagesEndRef}></div>
                 </div>
-                <div className="p-4 border-t border-gray-300">
-                  <form className="flex" onSubmit={handleSendMessage}>
+                <div className="p-4 bg-gray-200">
+                  <form className="flex gap-2" onSubmit={handleSendMessage}>
                     <input
-                      type="text"
-                      className="flex-grow border text-sm rounded-lg p-2.5 bg-gray-700 border-gray-600 text-white"
-                      placeholder="Send a message"
+                      className="flex-1 p-2 border rounded-md"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Type a message"
+                      disabled={sendMessageLoading}
                     />
                     <button
                       type="submit"
-                      className="ml-4 text-white bg-blue-500 hover:bg-blue-700 rounded-lg px-4 py-2"
+                      className="px-4 py-2 text-white bg-blue-500 rounded-md"
+                      disabled={sendMessageLoading}
                     >
-                      {sendMessageLoading ? (
-                        <div className="loading loading-spinner"></div>
-                      ) : (
-                        "Send"
-                      )}
+                      {sendMessageLoading ? "Sending..." : "Send"}
                     </button>
                   </form>
                 </div>
               </>
             ) : (
-              <div className="w-full p-4 text-center">
-                Select a mentor to start chatting
+              <div className="flex items-center justify-center h-full text-center text-gray-500">
+                Select a chat to start messaging
               </div>
             )}
           </div>
         </>
       ) : (
-        <div className="w-full text-center p-4">
-          Please log in to view your chats.
+        <div className="flex items-center justify-center w-full h-full text-center text-gray-500">
+          You need to be logged in to see your chats
         </div>
       )}
     </div>
