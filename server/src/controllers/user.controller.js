@@ -48,6 +48,7 @@ export const fetchUsersWithPagination = async (req, res) => {
 export const fetchMentorsByCollegeName = async (req, res) => {
   try {
     const college = req.params.id;
+    console.log(college);
     const CollegeId = await College.findOne({ name: college }).select("_id");
     if (!CollegeId) {
       return res.status(404).json({ message: "College not found", data: [] });
@@ -89,7 +90,6 @@ export const fetchUserByCollegeName = async (req, res) => {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
     const college = req.params.id;
-    console.log(college);
     const re = new RegExp(`^${college}`, "i");
     const CollegeId = await College.findOne({ name: { $regex: re } }).select(
       "_id"

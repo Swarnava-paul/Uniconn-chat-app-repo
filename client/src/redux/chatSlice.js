@@ -8,6 +8,7 @@ const chatSlice = createSlice({
   },
   reducers: {
     setMentorId: (state, action) => {
+      console.log("mentorId", action.payload);
       state.mentorId = action.payload;
     },
     clearMentorId: (state) => {

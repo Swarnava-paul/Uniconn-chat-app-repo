@@ -15,6 +15,7 @@ import { checkAuthStatus } from "./redux/userSlice";
 import AllColleges from "./pages/allcolleges/AllColleges";
 import AllMentors from "./pages/allmentors/AllMentors";
 import { Toaster } from "react-hot-toast";
+import CollegeUserPage from "./pages/specificmentorcollege/CollegeUserPage";
 
 function App() {
   const { user, loading } = useSelector((state) => state.user);
@@ -42,6 +43,10 @@ function App() {
         />
         <Route path="/colleges" element={<AllColleges />} />
         <Route path="/mentors" element={<AllMentors />} />
+        <Route
+          path="/user/search/:name"
+          element={user ? <Navigate to="/" /> : <CollegeUserPage />}
+        />
       </Routes>
       <Toaster />
     </div>

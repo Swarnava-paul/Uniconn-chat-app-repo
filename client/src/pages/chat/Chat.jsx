@@ -26,7 +26,7 @@ const Chat = () => {
         { credentials: "include" }
       );
       const data = await response.json();
-
+      console.log(data);
       setChats(data);
     } catch (error) {
       console.error("Error fetching chats:", error.message);
@@ -40,13 +40,18 @@ const Chat = () => {
   }, [user, fetchChats]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      console.log("no user");
+      return;
+    }
 
-    const socketInstance = io("wss://uniconn-chat-app-repo.onrender.com", {
+    const socketInstance = io(`${process.env.VITE_BACKEND_URL}`, {
+      path: "/socket",
+      transports: ["websocket", "polling"],
       secure: true,
       query: { userId: user._id },
     });
-
+    console.log("socket", socketInstance);
     socketInstance.on("newMessage", (newMessage) => {
       setMessages((prev) => [...prev, newMessage]);
       scrollToBottom();
@@ -144,9 +149,10 @@ const Chat = () => {
     }
   };
 
-  const selectedChat = chats?.find(
-    (chat) => chat.participants[0]._id === mentorId
-  );
+  const selectedChat = Array.isArray(chats)
+    ? chats.find((chat) => chat.participants[0]._id === mentorId)
+    : null;
+
   const mentorProfilePic =
     selectedChat?.participants[0]?.profilePic ||
     "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg";

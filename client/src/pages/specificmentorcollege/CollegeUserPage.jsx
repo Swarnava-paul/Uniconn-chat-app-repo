@@ -1,35 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Card from "../../components/Card";
 
-const AllMentors = () => {
+const CollegeUserPage = () => {
   const [page, setPage] = useState(0);
   const [mentors, setMentors] = useState([]);
   const [limit, setLimit] = useState(3);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { name: searchParam } = useParams();
 
   useEffect(() => {
     const fetchMentors = async () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `${process.env.VITE_BACKEND_URL}/api/v1/user?page=${page}&limit=${limit}`
+          `${process.env.VITE_BACKEND_URL}/api/v1/user/get/${searchParam}?page=${page}&limit=${limit}`,
+          { credentials: "include" }
         );
         const data = await res.json();
+        console.log(data);
         setLoading(false);
-        setMentors(data?.users);
-        setTotal(data.TotalCount);
+        setMentors(data?.data);
+        setTotal(data.totalCount); // ensure this is correctly set
       } catch (err) {
         setLoading(false);
-        console.log(err);
-      } finally {
-        setLoading(false);
+        console.error(err);
       }
     };
 
     fetchMentors();
-  }, [page, limit]);
+  }, [page, limit, searchParam]); // added searchParam to dependencies
 
   const handlePrevPage = () => {
     setPage((prevPage) => Math.max(prevPage - 1, 0));
@@ -59,6 +60,7 @@ const AllMentors = () => {
         <div className="flex flex-wrap gap-10 justify-center items-center">
           {mentors.map((mentor) => (
             <Card
+              key={mentor._id} // add a key to each Card component
               image={mentor.profilePic}
               name={mentor.name}
               CourseOfStream={mentor.CourseofStream}
@@ -98,4 +100,4 @@ const AllMentors = () => {
   );
 };
 
-export default AllMentors;
+export default CollegeUserPage;
