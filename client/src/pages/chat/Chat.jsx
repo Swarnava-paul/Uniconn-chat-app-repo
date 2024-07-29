@@ -28,7 +28,6 @@ const Chat = () => {
         { credentials: "include" }
       );
       const data = await response.json();
-      console.log(data);
       setChats(data);
     } catch (error) {
       console.error("Error fetching chats:", error.message);
@@ -100,12 +99,12 @@ const Chat = () => {
           { credentials: "include" }
         );
         const data = await response.json();
-        console.log("messages", data);
         setMessages(data);
 
-        const chat = chats?.find(
+        const chat = chats.find(
           (chat) => chat.participants[0]._id === mentorId
         );
+
         if (!chat) {
           const userInfoResponse = await fetch(
             `${process.env.VITE_BACKEND_URL}/api/v1/user/${mentorId}`,
@@ -117,10 +116,16 @@ const Chat = () => {
             participants: [userInfo.data],
             lastMessage: data[data.length - 1] || {},
           };
-          setChats((prev) => [
-            ...prev.filter((c) => c._id !== mentorId),
-            newChat,
-          ]);
+          setChats((prevChats) => {
+            const chatExists = prevChats.some((chat) => chat._id === mentorId);
+            if (!chatExists) {
+              return [...prevChats, newChat];
+            } else {
+              return prevChats.map((chat) =>
+                chat._id === mentorId ? newChat : chat
+              );
+            }
+          });
         }
       } catch (error) {
         console.error("Error fetching conversation:", error);
