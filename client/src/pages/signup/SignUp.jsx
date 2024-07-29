@@ -222,7 +222,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="w-full bg-slate-500 p-5 h-full">
+    <div className="w-full bg-[#8369ff] p-5 h-full">
       <div className="signup-container mx-auto max-w-md px-6 py-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-4">Sign Up</h2>
         <form onSubmit={handleSubmit}>
