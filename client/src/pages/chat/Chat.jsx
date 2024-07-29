@@ -117,18 +117,10 @@ const Chat = () => {
             participants: [userInfo.data],
             lastMessage: data[data.length - 1] || {},
           };
-          setChats((prev) => {
-            const existingChatIndex = prev.findIndex(
-              (chat) => chat._id === mentorId
-            );
-            if (existingChatIndex !== -1) {
-              const updatedChats = [...prev];
-              updatedChats[existingChatIndex] = newChat;
-              return updatedChats;
-            } else {
-              return [...prev, newChat];
-            }
-          });
+          setChats((prev) => [
+            ...prev.filter((c) => c._id !== mentorId),
+            newChat,
+          ]);
         }
       } catch (error) {
         console.error("Error fetching conversation:", error);
@@ -277,66 +269,55 @@ const Chat = () => {
                         </div>
                       ))}
                     </div>
-                  ) : (
+                  ) : messages.length > 0 ? (
                     messages.map((msg) => (
                       <div
                         key={msg._id}
-                        className={`chat ${
-                          msg.sender === user._id ? "chat-end" : "chat-start"
+                        className={`p-2 rounded-md ${
+                          msg.senderId === user._id
+                            ? "bg-blue-500 text-white self-end"
+                            : "bg-gray-200 self-start"
                         }`}
                       >
-                        <div className="chat-image avatar">
-                          <div className="w-10 rounded-full">
-                            <img
-                              alt="Avatar"
-                              src={
-                                msg.sender === user._id
-                                  ? user.profilePic
-                                  : mentorProfilePic
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className="chat-bubble">{msg.message}</div>
+                        {msg.message}
                       </div>
                     ))
+                  ) : (
+                    <div className="text-center text-gray-500">
+                      No messages yet.
+                    </div>
                   )}
-                  <div ref={messagesEndRef} />
+                  <div ref={messagesEndRef}></div>
                 </div>
-                <form
-                  onSubmit={handleSendMessage}
-                  className="flex items-center p-4 border-t border-gray-300"
-                >
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
-                  />
-                  <button
-                    type="submit"
-                    disabled={sendMessageLoading}
-                    className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring focus:ring-blue-300 disabled:opacity-50"
-                  >
-                    {sendMessageLoading ? "Sending..." : "Send"}
-                  </button>
-                </form>
+                <div className="p-4 bg-gray-200">
+                  <form className="flex gap-2" onSubmit={handleSendMessage}>
+                    <input
+                      className="flex-1 p-2 border rounded-md"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Type a message"
+                      disabled={sendMessageLoading}
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 text-white bg-blue-500 rounded-md"
+                      disabled={sendMessageLoading}
+                    >
+                      {sendMessageLoading ? "Sending..." : "Send"}
+                    </button>
+                  </form>
+                </div>
               </>
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <h2 className="text-xl font-semibold text-gray-500">
-                  Select a chat to start messaging
-                </h2>
+              <div className="flex items-center justify-center h-full text-center text-gray-500">
+                Select a chat to start messaging
               </div>
             )}
           </div>
         </>
       ) : (
-        <div className="flex items-center justify-center w-full h-full">
-          <h2 className="text-xl font-semibold text-gray-500">
-            Please login to view your chats
-          </h2>
+        <div className="flex items-center justify-center w-full h-full text-center text-gray-500">
+          You need to be logged in to see your chats
         </div>
       )}
     </div>
