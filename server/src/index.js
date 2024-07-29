@@ -35,18 +35,24 @@ app.use("/api/v1/colleges", collegeRoutes);
 // -----------------------Deployment-----------------------------------
 
 const __dirname = path.resolve();
-console.log(__dirname);
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+// console.log(__dirname);
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "..", "client", "dist")));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "..", "client", "dist", "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.send("Api is running");
-  });
-}
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "..", "client", "dist", "index.html"));
+//   });
+// } else {
+//   app.get("/", (req, res) => {
+//     res.send("Api is running");
+//   });
+// }
+
+app.use(express.static(path.join(__dirname, "client", "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+});
 
 connectDB();
 
