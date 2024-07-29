@@ -35,7 +35,6 @@ app.use("/api/v1/colleges", collegeRoutes);
 // -----------------------Deployment-----------------------------------
 
 const __dirname = path.resolve();
-// console.log(__dirname);
 // if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join(__dirname, "..", "client", "dist")));
 
