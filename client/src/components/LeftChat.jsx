@@ -3,7 +3,7 @@ import React from "react";
 const LeftChat = ({ name, lastMessage, onClick, pic, isOnline }) => {
   return (
     <div
-      className="flex flex-row h-20 gap-1 border border-1 border-gray-300 w-full cursor-pointer bg-white hover:bg-green-100"
+      className="flex flex-row h-20 gap-1 mt-4 rounded-md shadow-md border border-1 border-gray-300 w-full cursor-pointer bg-white hover:bg-green-100"
       onClick={onClick}
     >
       <div className="w-[20%] relative flex justify-center items-center p-2">

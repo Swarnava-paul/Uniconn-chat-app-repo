@@ -5,7 +5,7 @@ import Card from "../../components/Card";
 const AllMentors = () => {
   const [page, setPage] = useState(0);
   const [mentors, setMentors] = useState([]);
-  const [limit, setLimit] = useState(3);
+  const [limit, setLimit] = useState(6);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +43,6 @@ const AllMentors = () => {
 
   return (
     <div className="flex flex-col">
-      <h1>All Mentors</h1>
       {loading ? (
         <div className="flex w-52 flex-col gap-4">
           <div className="flex flex-col items-center gap-4">

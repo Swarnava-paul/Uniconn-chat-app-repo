@@ -231,11 +231,12 @@ const SignUp = () => {
               Name
             </label>
             <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.name ? "border-red-500" : ""
               }`}
               type="text"
               name="name"
+              placeholder="John Doe"
               value={formData.name}
               onChange={handleChange}
             />
@@ -248,11 +249,12 @@ const SignUp = () => {
               Email
             </label>
             <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.email ? "border-red-500" : ""
               }`}
               type="email"
               name="email"
+              placeholder="john.doe@example.com"
               value={formData.email}
               onChange={handleChange}
             />
@@ -265,11 +267,12 @@ const SignUp = () => {
               Place
             </label>
             <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.place ? "border-red-500" : ""
               }`}
               type="text"
               name="place"
+              placeholder="New York"
               value={formData.place}
               onChange={handleChange}
             />
@@ -282,11 +285,12 @@ const SignUp = () => {
               Phone
             </label>
             <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.phone ? "border-red-500" : ""
               }`}
               type="tel"
               name="phone"
+              placeholder="1234567890"
               value={formData.phone}
               onChange={handleChange}
             />
@@ -300,11 +304,12 @@ const SignUp = () => {
             </label>
             <div className="relative">
               <input
-                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                   formErrors.password ? "border-red-500" : ""
                 }`}
                 type={showPassword ? "text" : "password"}
                 name="password"
+                placeholder="*********"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -351,10 +356,11 @@ const SignUp = () => {
               About
             </label>
             <textarea
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.about ? "border-red-500" : ""
               }`}
               name="about"
+              placeholder="Tell us about yourself"
               value={formData.about}
               onChange={handleChange}
             />
@@ -367,11 +373,12 @@ const SignUp = () => {
               College
             </label>
             <input
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.college ? "border-red-500" : ""
               }`}
               type="text"
               name="college"
+              placeholder="Name your college"
               value={formData.college}
               onChange={handleChange}
             />
@@ -386,7 +393,7 @@ const SignUp = () => {
               Course/Stream
             </label>
             <select
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.CourseOfStream ? "border-red-500" : ""
               }`}
               name="CourseOfStream"
@@ -411,7 +418,7 @@ const SignUp = () => {
               Department
             </label>
             <select
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              className={`shadow appearance-none border bg-white rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 formErrors.Department ? "border-red-500" : ""
               }`}
               name="Department"

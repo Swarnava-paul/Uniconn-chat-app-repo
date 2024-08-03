@@ -28,7 +28,6 @@ const Chat = () => {
         { credentials: "include" }
       );
       const data = await response.json();
-      console.log(data);
       setChats(data);
     } catch (error) {
       console.error("Error fetching chats:", error.message);
@@ -61,10 +60,8 @@ const Chat = () => {
     } else if (socket) {
       socket.disconnect();
       setSocket(null);
-      return;
     } else {
       console.log("no user and no socket");
-      return;
     }
   }, [user]);
 
@@ -100,13 +97,12 @@ const Chat = () => {
           { credentials: "include" }
         );
         const data = await response.json();
-        console.log("messages", data);
         setMessages(data);
 
-        const chat = chats?.find(
+        const chat = chats.find(
           (chat) => chat.participants[0]._id === mentorId
         );
-        if (!chat) {
+        if (!data.length && !chat) {
           const userInfoResponse = await fetch(
             `${process.env.VITE_BACKEND_URL}/api/v1/user/${mentorId}`,
             { credentials: "include" }
@@ -235,7 +231,7 @@ const Chat = () => {
         <>
           <div
             ref={chatListRef}
-            className={`w-full md:w-1/3 bg-gray-100 ${
+            className={`w-full md:w-1/3 p-5 bg-gray-200 ${
               mentorId ? "hidden md:block" : ""
             }`}
           >
@@ -261,7 +257,7 @@ const Chat = () => {
                   />
                   <h2 className="text-lg font-semibold">{mentorName}</h2>
                 </div>
-                <div className="flex flex-col gap-3 p-4 overflow-y-auto h-[calc(100vh-150px)] no-scrollbar">
+                <div className="flex flex-col gap-3 p-4 overflow-y-auto h-[calc(100vh-150px)] bg-white no-scrollbar">
                   {loadingMessages ? (
                     <div className="p-4">
                       {[...Array(6)].map((_, index) => (
@@ -269,7 +265,7 @@ const Chat = () => {
                           key={index}
                           className="flex items-center gap-4 p-2 mb-2 bg-gray-200 animate-pulse rounded-md"
                         >
-                          <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+                          <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                           <div className="flex-1">
                             <div className="h-4 bg-gray-300 rounded mb-2"></div>
                             <div className="h-3 bg-gray-300 rounded"></div>
@@ -277,12 +273,12 @@ const Chat = () => {
                         </div>
                       ))}
                     </div>
-                  ) : (
+                  ) : messages.length > 0 ? (
                     messages.map((msg) => (
                       <div
                         key={msg._id}
                         className={`chat ${
-                          msg.sender === user._id ? "chat-end" : "chat-start"
+                          msg.senderId === user._id ? "chat-end" : "chat-start"
                         }`}
                       >
                         <div className="chat-image avatar">
@@ -290,34 +286,48 @@ const Chat = () => {
                             <img
                               alt="Avatar"
                               src={
-                                msg.sender === user._id
+                                msg.senderId === user._id
                                   ? user.profilePic
                                   : mentorProfilePic
                               }
                             />
                           </div>
                         </div>
-                        <div className="chat-bubble">{msg.message}</div>
+                        <div
+                          className={`chat-bubble text-black ${
+                            msg.senderId === user._id
+                              ? "bg-purple-500 text-white"
+                              : "bg-gray-300"
+                          } max-w-[80%] break-words`}
+                        >
+                          {msg.message}
+                        </div>
                       </div>
                     ))
+                  ) : (
+                    <p>no messages yet</p>
                   )}
                   <div ref={messagesEndRef} />
                 </div>
                 <form
+                  className="flex p-4 border-t border-gray-300"
                   onSubmit={handleSendMessage}
-                  className="flex items-center p-4 border-t border-gray-300"
                 >
                   <input
                     type="text"
+                    className="flex-1 p-2 border border-gray-300 rounded-md"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
                   />
                   <button
                     type="submit"
+                    className={`ml-2 p-2 rounded-md ${
+                      sendMessageLoading
+                        ? "bg-gray-400"
+                        : "bg-blue-500 text-white"
+                    }`}
                     disabled={sendMessageLoading}
-                    className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring focus:ring-blue-300 disabled:opacity-50"
                   >
                     {sendMessageLoading ? "Sending..." : "Send"}
                   </button>
@@ -325,18 +335,14 @@ const Chat = () => {
               </>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <h2 className="text-xl font-semibold text-gray-500">
-                  Select a chat to start messaging
-                </h2>
+                <p>Select a chat to start messaging</p>
               </div>
             )}
           </div>
         </>
       ) : (
-        <div className="flex items-center justify-center w-full h-full">
-          <h2 className="text-xl font-semibold text-gray-500">
-            Please login to view your chats
-          </h2>
+        <div className="flex items-center justify-center h-full">
+          <p>Loading user...</p>
         </div>
       )}
     </div>

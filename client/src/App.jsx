@@ -16,17 +16,22 @@ import AllColleges from "./pages/allcolleges/AllColleges";
 import AllMentors from "./pages/allmentors/AllMentors";
 import { Toaster } from "react-hot-toast";
 import CollegeUserPage from "./pages/specificmentorcollege/CollegeUserPage";
+import RequestMentor from "./pages/requestmentor/RequestMentor";
+import EditProfile from "./pages/EditprofilePage/EditProfilePage";
 
 function App() {
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Check if this is a manual refresh
-    if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-      dispatch(checkAuthStatus());
-    }
+    // Always check auth status on initial load
+    dispatch(checkAuthStatus());
   }, [dispatch]);
+
+  // Render a loading indicator until the auth status is checked
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="no-scrollbar">
@@ -44,6 +49,8 @@ function App() {
         <Route path="/colleges" element={<AllColleges />} />
         <Route path="/mentors" element={<AllMentors />} />
         <Route path="/user/search/:name" element={<CollegeUserPage />} />
+        <Route path="/mentor/request" element={<RequestMentor />} />
+        <Route path="/mentor/editprofile" element={<EditProfile />} />
       </Routes>
       <Toaster />
     </div>

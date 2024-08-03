@@ -4,7 +4,7 @@ import CollegeCard from "../../components/CollegeCard";
 const AllColleges = () => {
   const [page, setPage] = useState(0);
   const [colleges, setColleges] = useState([]);
-  const [limit, setLimit] = useState(3);
+  const [limit, setLimit] = useState(6);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
@@ -36,8 +36,8 @@ const AllColleges = () => {
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex flex-wrap">
-        <div className="flex flex-wrap gap-10 p-10f">
+      <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap items-center justify-center gap-10 p-10">
           {colleges?.map((college) => {
             return (
               <CollegeCard

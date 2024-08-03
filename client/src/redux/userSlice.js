@@ -28,6 +28,7 @@ export const fetchUserByLoginDetails = createAsyncThunk(
         toast.success("Successfully logged in", {
           duration: 4000,
         });
+        console.log(data);
         return data?.data;
       } else {
         toast.error(data?.message || "An error occurred");

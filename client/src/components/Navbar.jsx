@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { logout } from "../redux/userSlice";
 
@@ -86,7 +86,9 @@ const Navbar = () => {
     <div className="w-full flex flex-row">
       <div className="navbar w-full bg-gray-300 px-5 py-1 pr-5 gap-1 relative">
         <div className="navbar-start vsm:hidden md:flex md:min-w-10">
-          <img src="/images/Logo.svg" alt="logo" />
+          <Link to="/mentor/editprofile">
+            <img src="/images/Logo.svg" alt="logo" />
+          </Link>
         </div>
         <div className="navbar-center flex items-center w-[70%] max-w-[30rem] mx-auto relative">
           <label htmlFor="simple-search" className="sr-only">
@@ -155,7 +157,7 @@ const Navbar = () => {
               <ul className="absolute left-0 bg-white border border-gray-300 w-full mt-2 rounded-lg shadow-lg z-10 text-black max-h-60 overflow-y-auto">
                 {searchResults.map((college) => (
                   <li
-                    key={college.id}
+                    key={college._id}
                     className="p-2 hover:bg-gray-200 cursor-pointer"
                     onMouseEnter={() => handleResultHover(college)}
                     onClick={() => handleResultClick(college)}
