@@ -47,16 +47,40 @@ export const fetchUsersWithPagination = async (req, res) => {
 
 export const fetchMentorsByCollegeName = async (req, res) => {
   try {
-    const college = req.params.id;
-    console.log(college);
-    const CollegeId = await College.findOne({ name: college }).select("_id");
+    const { page = 0, limit = 2 } = req.query;
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    const college = req.params.id.trim();
+    const re = new RegExp(`^${college}$`, "i");
+
+    const CollegeId = await College.findOne({ name: { $regex: re } }).select(
+      "_id"
+    );
+
     if (!CollegeId) {
       return res.status(404).json({ message: "College not found", data: [] });
     }
-    const mentors = await User.find({ college: CollegeId });
-    res.status(200).json({ data: mentors });
+
+    const totalCount = await User.countDocuments({ college: CollegeId });
+    const mentors = await User.find({ college: CollegeId })
+      .skip(pageNumber * limitNumber)
+      .limit(limitNumber)
+      .select("-password -refreshToken");
+
+    const currentPage = pageNumber;
+
+    if (mentors.length === 0) {
+      return res.status(200).json({ message: "No mentors present", data: [] });
+    }
+
+    res.status(200).json({
+      data: mentors,
+      totalCount,
+      currentPage,
+      totalPages: Math.ceil(totalCount / limitNumber),
+    });
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json(error.message);
   }
 };
 
@@ -120,13 +144,30 @@ export const fetchUserByCollegeName = async (req, res) => {
 //GET SPECIFIC USER DETAILS
 export const fetchUserDetailsById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id).select("-password -refreshToken");
+    const { _id } = req.user;
+    const user = await User.findById(_id)
+      .select("-password -refreshToken")
+      .populate("college");
     if (!user) {
       return res.status(404).json({ message: "User not found", data: [] });
     }
     res.status(200).json({ message: "User found", data: user });
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(500).json(err);
+  }
+};
+
+export const fetchUserDetailsByIdForChatsByParam = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id)
+      .select("-password -refreshToken")
+      .populate("college");
+    if (!user) {
+      return res.status(404).json({ message: "User not found", data: [] });
+    }
+    res.status(200).json({ message: "User found", data: user });
+  } catch (err) {
+    res.status(500).json(err);
   }
 };

@@ -7,8 +7,10 @@ export const registerUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   try {
+    const college = req.body.college.trim();
+    const re = new RegExp(`^${college}$`, "i");
     const existedCollege = await College.findOne({
-      name: req.body.college,
+      name: { $regex: re },
     });
     let collegeId;
     if (existedCollege) {
@@ -49,7 +51,8 @@ export const registerUser = async (req, res) => {
       message: "User created successfully",
     });
   } catch (error) {
-    return res.status(500).json(error.message);
+    console.log(error);
+    return res.status(500).json(error);
   }
 };
 
