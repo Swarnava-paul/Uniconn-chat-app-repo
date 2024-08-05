@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Card from "../../components/Card";
+import Navbar from "../../components/Navbar";
 
 const AllMentors = () => {
   const [page, setPage] = useState(0);
@@ -14,9 +15,11 @@ const AllMentors = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `${process.env.VITE_BACKEND_URL}/api/v1/user?page=${page}&limit=${limit}`
+          `${process.env.VITE_BACKEND_URL}/api/v1/user?page=${page}&limit=${limit}`,
+          { credentials: "include" }
         );
         const data = await res.json();
+        console.log(data);
         setLoading(false);
         setMentors(data?.users);
         setTotal(data.TotalCount);
@@ -42,7 +45,8 @@ const AllMentors = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-3">
+      <Navbar />
       {loading ? (
         <div className="flex w-52 flex-col gap-4">
           <div className="flex flex-col items-center gap-4">

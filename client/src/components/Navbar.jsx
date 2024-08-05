@@ -10,6 +10,7 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isMenu, setIsMenu] = useState(false);
   const searchRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -83,11 +84,11 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="w-full flex flex-row">
-      <div className="navbar w-full bg-gray-300 px-5 py-1 pr-5 gap-1 relative">
-        <div className="navbar-start vsm:hidden md:flex md:min-w-10">
-          <Link to="/mentor/editprofile">
-            <img src="/images/Logo.svg" alt="logo" />
+    <div className="w-full flex flex-row relative shadow-sm">
+      <div className="navbar w-full bg-white px-5 py-1 pr-5 gap-1 relative">
+        <div className="navbar-start vsm:hidden md:flex mr-[1.5rem] md:min-w-10">
+          <Link to="/">
+            <img src="/images/Logo.svg" alt="logo" className="w-[7rem]" />
           </Link>
         </div>
         <div className="navbar-center flex items-center w-[70%] max-w-[30rem] mx-auto relative">
@@ -192,15 +193,73 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-end flex justify-center items-center">
+          <div className="lg:hidden">
+            {!isMenu ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="2em"
+                height="2em"
+                viewBox="0 0 24 24"
+                onClick={() => setIsMenu((prev) => !prev)}
+                className="hover:cursor-pointer lg:hidden"
+              >
+                <path
+                  fill="currentColor"
+                  d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"
+                />
+              </svg>
+            ) : (
+              <svg
+                onClick={() => setIsMenu((prev) => !prev)}
+                xmlns="http://www.w3.org/2000/svg"
+                width="2em"
+                height="2em"
+                viewBox="0 0 24 24"
+                className="hover:cursor-pointer lg:hidden"
+              >
+                <path
+                  fill="currentColor"
+                  d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6z"
+                />
+              </svg>
+            )}
+            {isMenu && (
+              <div className="w-full lg:hidden flex flex-col justify-center items-center gap-2 bg-white absolute top-[4rem] z-30 left-0 pb-1">
+                {user ? (
+                  <div
+                    className=" flex justify-center items-center w-full cursor-pointer text-black hover:bg-purple-500 hover:rounded-full font-bold py-2 px-4"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </div>
+                ) : (
+                  <div
+                    className=" flex justify-center cursor-pointer items-center w-full text-black hover:bg-purple-500 hover:rounded-full font-bold py-2 px-4"
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </div>
+                )}
+                {user && (
+                  <div
+                    className=" flex justify-center cursor-pointer items-center w-full hover:rounded-full text-black hover:bg-purple-500 font-bold py-2 px-4"
+                    onClick={() => navigate("/mentor/editprofile")}
+                  >
+                    My Account
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           {user ? (
             <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+              className="bg-red-500 vsm:hidden lg:flex hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
               onClick={handleLogout}
             >
               Logout
             </button>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center vsm:hidden lg:flex gap-2">
               <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
                 onClick={() => navigate("/login")}
@@ -208,6 +267,28 @@ const Navbar = () => {
                 Login
               </button>
             </div>
+          )}
+          {user && (
+            <button
+              className="lg:flex hidden items-center bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded-full mx-4 font-bold"
+              onClick={() => navigate("/mentor/editprofile")}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5.121 21H3v-2.121l13.537-13.537 2.121 2.121L5.121 21zM19.768 6.232l-2.121-2.121 1.415-1.414a1.5 1.5 0 012.121 0l.707.707a1.5 1.5 0 010 2.121l-1.415 1.414z"
+                />
+              </svg>
+              <span>My Account</span>
+            </button>
           )}
         </div>
       </div>

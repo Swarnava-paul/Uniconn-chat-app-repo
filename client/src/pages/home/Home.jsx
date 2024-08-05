@@ -21,7 +21,8 @@ const Home = () => {
       try {
         setMentorLoading(true);
         const res = await fetch(
-          `${process.env.VITE_BACKEND_URL}/api/v1/user?page=${mentorpage}&limit=${mentorlimit}`
+          `${process.env.VITE_BACKEND_URL}/api/v1/user?page=${mentorpage}&limit=${mentorlimit}`,
+          { credentials: "include" }
         );
         const data = await res.json();
         setMentorLoading(false);
@@ -54,7 +55,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3 no-scrollbar scroll-smooth">
+    <div className="flex flex-col gap-3 bg-white no-scrollbar scroll-smooth">
       <Navbar />
       <div className="relative flex h-screen justify-center items-center -mt-3 bg-cover bg-center">
         <img

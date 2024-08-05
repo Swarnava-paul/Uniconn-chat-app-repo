@@ -28,7 +28,7 @@ const Chat = () => {
         { credentials: "include" }
       );
       const data = await response.json();
-      setChats(data);
+      setChats(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching chats:", error.message);
     } finally {
@@ -49,6 +49,7 @@ const Chat = () => {
         query: { userId: user._id },
       });
       setSocket(socketInstance);
+
       socketInstance.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
       });
@@ -60,15 +61,13 @@ const Chat = () => {
     } else if (socket) {
       socket.disconnect();
       setSocket(null);
-    } else {
-      console.log("no user and no socket");
     }
   }, [user]);
 
   useEffect(() => {
     if (socket) {
       socket.on("newMessage", (newMessage) => {
-        setMessages((prev) => [...prev, newMessage]);
+        setMessages((prev = []) => [...prev, newMessage]);
         scrollToBottom();
       });
 
@@ -97,9 +96,9 @@ const Chat = () => {
           { credentials: "include" }
         );
         const data = await response.json();
-        setMessages(data);
+        setMessages(Array.isArray(data) ? data : []);
 
-        const chat = chats.find(
+        const chat = (chats || []).find(
           (chat) => chat.participants[0]._id === mentorId
         );
         if (!data.length && !chat) {
@@ -113,21 +112,21 @@ const Chat = () => {
             participants: [userInfo.data],
             lastMessage: data[data.length - 1] || {},
           };
-          setChats((prev) => {
-            const existingChatIndex = prev.findIndex(
+          setChats((prevChats = []) => {
+            const updatedChats = [...prevChats];
+            const existingChatIndex = updatedChats.findIndex(
               (chat) => chat._id === mentorId
             );
             if (existingChatIndex !== -1) {
-              const updatedChats = [...prev];
               updatedChats[existingChatIndex] = newChat;
-              return updatedChats;
             } else {
-              return [...prev, newChat];
+              updatedChats.push(newChat);
             }
+            return updatedChats;
           });
         }
       } catch (error) {
-        console.error("Error fetching conversation:", error);
+        console.error("Error fetching messages:", error);
       } finally {
         setLoadingMessages(false);
       }
@@ -161,9 +160,26 @@ const Chat = () => {
         }
       );
       const data = await response.json();
-      setMessages((prev) => [...prev, data]);
+      setMessages((prev = []) => [...prev, data]);
       setMessage("");
       scrollToBottom();
+
+      setChats((prevChats = []) => {
+        const updatedChats = [...prevChats];
+        const chatIndex = updatedChats.findIndex(
+          (chat) => chat.participants[0]._id === mentorId
+        );
+        if (chatIndex !== -1) {
+          updatedChats[chatIndex].lastMessage = data;
+        } else {
+          updatedChats.push({
+            _id: mentorId,
+            participants: [user],
+            lastMessage: data,
+          });
+        }
+        return updatedChats;
+      });
     } catch (error) {
       console.error("Error sending message:", error.message);
     } finally {
@@ -233,7 +249,7 @@ const Chat = () => {
             ref={chatListRef}
             className={`w-full md:w-1/3 p-5 bg-gray-200 ${
               mentorId ? "hidden md:block" : ""
-            }`}
+            } overflow-y-auto no-scrollbar`}
           >
             {renderChats()}
           </div>
@@ -305,7 +321,7 @@ const Chat = () => {
                       </div>
                     ))
                   ) : (
-                    <p>no messages yet</p>
+                    <p>No messages yet</p>
                   )}
                   <div ref={messagesEndRef} />
                 </div>
