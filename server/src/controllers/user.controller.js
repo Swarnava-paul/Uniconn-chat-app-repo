@@ -1,6 +1,7 @@
 import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
 import College from "../models/college.model.js";
+import jwt from "jsonwebtoken";
 
 export const fetchUserChatsforSideBar = async (req, res) => {
   try {
@@ -30,23 +31,50 @@ export const fetchUserChatsforSideBar = async (req, res) => {
 
 export const fetchUsersWithPagination = async (req, res) => {
   try {
+    const token =
+      req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
+    let find = {};
+
+    if (token) {
+      try {
+        const decodedToken = jwt.verify(
+          token,
+          process.env.JWT_ACCESS_TOKEN_SECRET
+        );
+        find._id = { $ne: decodedToken.id }; // Exclude the current user from the results
+      } catch (tokenError) {
+        console.log("Error verifying token:", tokenError.message);
+        return res.status(401).json({ error: "Invalid token" });
+      }
+    }
+
     const { page = 0, limit = 2 } = req.query;
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
-    const users = await User.find()
+
+    const users = await User.find(find)
       .skip(pageNumber * limitNumber)
       .limit(limitNumber)
       .exec();
-    const TotalCount = await User.countDocuments();
-    const currentPage = page * limit;
+
+    const TotalCount = await User.countDocuments(find);
+
     res.status(200).json({ users, TotalCount });
   } catch (err) {
+    console.log("Error:", err.message);
     return res.status(500).json(err);
   }
 };
 
 export const fetchMentorsByCollegeName = async (req, res) => {
   try {
+    const filter = {};
+    if (req.query.course) {
+      filter.CourseofStream = req.query.course;
+    }
+    if (req.query.department) {
+      filter.Department = req.query.department;
+    }
     const { page = 0, limit = 2 } = req.query;
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
@@ -60,9 +88,10 @@ export const fetchMentorsByCollegeName = async (req, res) => {
     if (!CollegeId) {
       return res.status(404).json({ message: "College not found", data: [] });
     }
+    filter.college = CollegeId;
 
-    const totalCount = await User.countDocuments({ college: CollegeId });
-    const mentors = await User.find({ college: CollegeId })
+    const totalCount = await User.countDocuments(filter);
+    const mentors = await User.find(filter)
       .skip(pageNumber * limitNumber)
       .limit(limitNumber)
       .select("-password -refreshToken");
