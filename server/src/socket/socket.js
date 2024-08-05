@@ -11,6 +11,7 @@ const io = new Server(httpServer, {
     origin: [
       "http://localhost:5173",
       "https://uniconn-chat-app-repo.vercel.app",
+      "https://uniconn.co.in",
     ],
   },
   allowEIO3: true,

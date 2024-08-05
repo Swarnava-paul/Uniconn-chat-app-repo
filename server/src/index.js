@@ -16,6 +16,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://uniconn-chat-app-repo.vercel.app",
+      "https://uniconn.co.in",
     ],
     credentials: true,
   })
