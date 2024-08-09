@@ -2,6 +2,9 @@ import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
 import College from "../models/college.model.js";
 import jwt from "jsonwebtoken";
+import { transporter } from "../../services/emailService/sendEmail.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const fetchUserChatsforSideBar = async (req, res) => {
   try {
@@ -196,6 +199,34 @@ export const fetchUserDetailsByIdForChatsByParam = async (req, res) => {
       return res.status(404).json({ message: "User not found", data: [] });
     }
     res.status(200).json({ message: "User found", data: user });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+export const RequestMentorSendEmail = async (req, res) => {
+  try {
+    const name = req.body.name;
+    const message = req.body.message;
+    const college = req.body.college;
+    const Department = req.body.department;
+    const email = req.body.email;
+    // Email options
+    let mailOptions = {
+      from: `"${name}" <${email}>`, // Sender address
+      to: "yogieswar.ananthu7@gmail.com", // List of recipients
+      subject: "Request Mentor from Uniconn", // Subject line
+      html: `<div>Hi Team, I need a mentor from <b>${college}</b> college of Department <b>${Department}</b>
+              I am ${name}<br/>. These is my small request <b>${message}</b></div>`, // html
+    };
+
+    // Send email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(`Error: ${error}`);
+      }
+      return res.status(200).json({ info, message: "succesfully sent" });
+    });
   } catch (err) {
     res.status(500).json(err);
   }

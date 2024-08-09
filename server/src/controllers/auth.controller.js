@@ -94,6 +94,8 @@ export const loginUser = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "None", // Necessary for cross-origin cookies
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     };
 
     return res
@@ -128,6 +130,7 @@ export const logoutUser = async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "None", // Necessary for cross-origin cookies
   };
 
   return res

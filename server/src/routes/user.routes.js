@@ -8,6 +8,7 @@ import {
   fetchUserDetailsById,
   fetchUserDetailsByIdForChatsByParam,
   fetchUsersWithPagination,
+  RequestMentorSendEmail,
 } from "../controllers/user.controller.js";
 import verifyToken from "../middlewares/verifyJwt.js";
 
@@ -19,5 +20,6 @@ router.get("/sample", fetchAllUsers);
 router.get("/find/profile", verifyToken, fetchUserDetailsById);
 router.get("/:id", fetchUserDetailsByIdForChatsByParam);
 router.get("/get/:id", fetchMentorsByCollegeName);
+router.post("/request-mentor", RequestMentorSendEmail);
 
 export default router;
