@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 const RequestMentor = () => {
   const [formData, setFormData] = useState({
     name: "",
-    password: "",
+    email: "",
     college: "",
     department: "",
     message: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false); // New state variable for loading
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +20,7 @@ const RequestMentor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when form is submitted
     try {
       const response = await fetch(
         `${process.env.VITE_BACKEND_URL}/api/v1/user/request-mentor`,
@@ -29,11 +31,15 @@ const RequestMentor = () => {
           body: JSON.stringify(formData),
         }
       );
+
+      const data = await response.json();
       if (response.ok) {
         setSubmitted(true);
       }
     } catch (error) {
       console.error("Error submitting form", error);
+    } finally {
+      setLoading(false); // Set loading to false when request completes
     }
   };
 
@@ -87,7 +93,7 @@ const RequestMentor = () => {
               <input
                 type="text"
                 name="name"
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border bg-white text-black border-gray-300 rounded"
                 placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
@@ -95,33 +101,17 @@ const RequestMentor = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-bold">Password*</label>
+              <label className="block mb-2 text-sm font-bold">Email*</label>
               <div className="relative">
                 <input
-                  type="password"
-                  name="password"
-                  className="w-full p-2 border border-gray-300 rounded pr-10"
-                  placeholder="Password"
-                  value={formData.password}
+                  type="email"
+                  name="email"
+                  className="w-full p-2 border bg-white text-black border-gray-300 rounded pr-10"
+                  placeholder="Email"
+                  value={formData.email}
                   onChange={handleChange}
                   required
                 />
-                <span className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
-                  <svg
-                    className="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 12h.01M12 12h.01M9 12h.01M9 12a3.75 3.75 0 00-7.5 0 3.75 3.75 0 007.5 0zm9 0a3.75 3.75 0 00-7.5 0 3.75 3.75 0 007.5 0zM12 9v.01M12 12v.01M12 15v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                </span>
               </div>
             </div>
             <div>
@@ -131,7 +121,7 @@ const RequestMentor = () => {
               <input
                 type="text"
                 name="college"
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border bg-white text-black border-gray-300 rounded"
                 placeholder="College"
                 value={formData.college}
                 onChange={handleChange}
@@ -145,7 +135,7 @@ const RequestMentor = () => {
               <input
                 type="text"
                 name="department"
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border bg-white text-black border-gray-300 rounded"
                 placeholder="Department"
                 value={formData.department}
                 onChange={handleChange}
@@ -165,9 +155,33 @@ const RequestMentor = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-purple-500 text-white rounded-lg"
+              className="w-full py-2 px-4 bg-purple-500 text-white rounded-lg flex items-center justify-center"
+              disabled={loading} // Disable button when loading
             >
-              Request
+              {loading ? (
+                <svg
+                  className="animate-spin h-5 w-5 mr-3 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.964 7.964 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                "Request"
+              )}
             </button>
           </form>
         </div>
