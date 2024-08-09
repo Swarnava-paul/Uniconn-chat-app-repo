@@ -2,7 +2,7 @@ import Conversation from "../models/conversation.model.js";
 import User from "../models/user.model.js";
 import College from "../models/college.model.js";
 import jwt from "jsonwebtoken";
-import { transporter } from "../../services/emailService/sendEmail.js";
+import { transporter } from "../services/emailService/sendEmail.js";
 import dotenv from "dotenv";
 dotenv.config();
 
