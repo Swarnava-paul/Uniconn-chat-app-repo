@@ -206,28 +206,21 @@ export const fetchUserDetailsByIdForChatsByParam = async (req, res) => {
 
 export const RequestMentorSendEmail = async (req, res) => {
   try {
-    const name = req.body.name;
-    const message = req.body.message;
-    const college = req.body.college;
-    const Department = req.body.department;
-    const email = req.body.email;
+    const { name, message, college, department, email } = req.body;
+
     // Email options
     let mailOptions = {
       from: `"${name}" <${email}>`, // Sender address
       to: "yogieswar.ananthu7@gmail.com", // List of recipients
       subject: "Request Mentor from Uniconn", // Subject line
-      html: `<div>Hi Team, I need a mentor from <b>${college}</b> college of Department <b>${Department}</b>
-              I am ${name}<br/>. These is my small request <b>${message}</b></div>`, // html
+      html: `<div>Hi Team, I need a mentor from <b>${college}</b> college of Department <b>${department}</b>.
+              I am ${name}<br/>. This is my small request: <b>${message}</b></div>`, // HTML body
     };
 
     // Send email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return console.log(`Error: ${error}`);
-      }
-      return res.status(200).json({ info, message: "succesfully sent" });
-    });
+    const info = await sendEmail(mailOptions);
+    return res.status(200).json({ info, message: "Successfully sent" });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json(err.message);
   }
 };
