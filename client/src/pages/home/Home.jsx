@@ -54,6 +54,10 @@ const Home = () => {
     })();
   }, []);
 
+  const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
   return (
     <div className="flex flex-col gap-3 bg-white no-scrollbar scroll-smooth">
       <Navbar />
@@ -134,8 +138,8 @@ const Home = () => {
               {colleges.map((college) => (
                 <CollegeCard
                   key={college._id}
-                  name={college.name}
-                  place={college.place}
+                  name={capitalizeWords(college.name)}
+                  place={capitalizeWords(college.place)}
                   image={college.image}
                 />
               ))}

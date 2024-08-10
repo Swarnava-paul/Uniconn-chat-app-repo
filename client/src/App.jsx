@@ -34,7 +34,7 @@ function App() {
   }
 
   return (
-    <div className="no-scrollbar">
+    <div className="">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route

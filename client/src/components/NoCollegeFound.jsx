@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const NoCollegeFound = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-screen h-full">
+    <div className="w-screen h-[100vh]">
       <div className="h-[50%] w-full relative md:pl-[5rem]">
         <div className="image absolute h-full vsm:w-[17rem] lg:w-[25rem] lg:h-[60vh]">
           <img

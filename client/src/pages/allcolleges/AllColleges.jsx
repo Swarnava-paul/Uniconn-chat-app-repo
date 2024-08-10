@@ -34,6 +34,10 @@ const AllColleges = () => {
     );
   };
 
+  const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
   return (
     <div className="flex flex-col gap-1">
       <div className="flex flex-wrap gap-1">
@@ -42,8 +46,8 @@ const AllColleges = () => {
             return (
               <CollegeCard
                 key={college._id} // Assuming each college has a unique _id
-                name={college.name}
-                place={college.place}
+                name={capitalizeWords(college.name)}
+                place={capitalizeWords(college.place)}
                 image={college.image}
               />
             );

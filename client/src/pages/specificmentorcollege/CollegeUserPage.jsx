@@ -84,7 +84,7 @@ const CollegeUserPage = () => {
   const availableDepartments = course ? courseAndDepartments[course] : [];
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full bg-white no-scrollbar">
       <Navbar />
       <div className="flex flex-col md:flex-row gap-4 py-4 md:py-8 px-4 md:px-10 w-full">
         <select
@@ -113,7 +113,7 @@ const CollegeUserPage = () => {
           ))}
         </select>
       </div>
-      <div className="flex flex-col p-4">
+      <div className="flex flex-col p-4 bg-white">
         {loading ? (
           <div className="flex flex-col items-center gap-4">
             <div className="skeleton h-16 w-16 rounded-full"></div>
@@ -141,30 +141,32 @@ const CollegeUserPage = () => {
             ))}
           </div>
         )}
-        <div className="flex flex-row justify-between p-10">
-          <button
-            className={`p-3 text-black border ${
-              page === 0
-                ? "bg-red-100 border-red-500 cursor-not-allowed"
-                : "bg-gray-100 border-gray-200"
-            }`}
-            onClick={handlePrevPage}
-            disabled={page === 0}
-          >
-            Prev
-          </button>
-          <button
-            className={`p-3 text-black border ${
-              (page + 1) * limit >= total
-                ? "bg-red-100 border-red-500 cursor-not-allowed"
-                : "bg-gray-100 border-gray-200"
-            }`}
-            onClick={handleNextPage}
-            disabled={(page + 1) * limit >= total}
-          >
-            Next
-          </button>
-        </div>
+        {mentors == [] && (
+          <div className="flex flex-row justify-between p-10 w-full">
+            <button
+              className={`p-3 text-black border ${
+                page === 0
+                  ? "bg-red-100 border-red-500 cursor-not-allowed"
+                  : "bg-gray-100 border-gray-200"
+              }`}
+              onClick={handlePrevPage}
+              disabled={page === 0}
+            >
+              Prev
+            </button>
+            <button
+              className={`p-3 text-black border ${
+                (page + 1) * limit >= total
+                  ? "bg-red-100 border-red-500 cursor-not-allowed"
+                  : "bg-gray-100 border-gray-200"
+              }`}
+              onClick={handleNextPage}
+              disabled={(page + 1) * limit >= total}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
