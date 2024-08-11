@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CollegeCard from "../../components/CollegeCard";
+import Navbar from "../../components/Navbar";
 
 const AllColleges = () => {
   const [page, setPage] = useState(0);
@@ -39,7 +40,8 @@ const AllColleges = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-3">
+      <Navbar />
       <div className="flex flex-wrap gap-1">
         <div className="flex flex-wrap items-center justify-center gap-10 p-10">
           {colleges?.map((college) => {
