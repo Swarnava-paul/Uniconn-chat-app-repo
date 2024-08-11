@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import Card from "../../components/Card";
 import Navbar from "../../components/Navbar";
 
 const AllMentors = () => {
   const [page, setPage] = useState(0);
   const [mentors, setMentors] = useState([]);
-  const [limit, setLimit] = useState(6);
+  const [limit, setLimit] = useState(12);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +18,6 @@ const AllMentors = () => {
           { credentials: "include" }
         );
         const data = await res.json();
-        console.log(data);
         setLoading(false);
         setMentors(data?.users);
         setTotal(data.TotalCount);
