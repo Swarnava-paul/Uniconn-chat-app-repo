@@ -63,11 +63,12 @@ const Home = () => {
       <Navbar />
       <div className="relative flex h-screen justify-center items-center -mt-3 bg-cover bg-center">
         <img
-          src="https://as1.ftcdn.net/v2/jpg/04/34/08/56/1000_F_434085662_Pd3yWP81H8d7kGW5Z1J3SfSfvMgGsth7.jpg"
-          alt="background"
-          className=" inset-0 w-full h-full object-cover opacity-[1]"
+          src="/images/background.png"
+          alt="background image"
+          className=" inset-0 h-[70%] object-cover opacity-[1] z-10"
         />
-        <div className="absolute z-10 text-7xl top-[10rem] font-bold text-center text-white">
+        <div className="bg-purple-400 rounded-full w-[22rem] h-[22rem] -z-1 absolute bottom-2 "></div>
+        <div className="absolute z-10 text-7xl top-[2rem] font-bold text-center text-black">
           <Typewriter
             options={{ loop: true }}
             onInit={(typewriter) => {
@@ -80,7 +81,7 @@ const Home = () => {
             }}
           />
         </div>
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-purple-300 opacity-50"></div>
       </div>
       <div className="flex flex-col">
         <div className="flex flex-row justify-between p-2">

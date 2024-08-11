@@ -101,7 +101,7 @@ const Login = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-purple-500 text-white rounded-lg flex items-center justify-center"
+              className="w-full py-2 px-4 bg-blue-500 text-white rounded-lg flex items-center justify-center"
               disabled={loading} // Disable button when loading
             >
               {loading ? (

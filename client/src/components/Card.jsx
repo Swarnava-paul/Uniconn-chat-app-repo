@@ -23,7 +23,7 @@ const Card = ({
   return (
     <div className="flex flex-col bg-white p-4 gap-3 border border-gray-200 min-h-96 w-[20rem] h-[35rem] justify-between  shadow-xl rounded-xl">
       <div className="flex flex-col items-center">
-        <div className="w-[8.5rem] h-[8.5rem] rounded-full flex justify-center items-center bg-purple-200">
+        <div className="w-[8.5rem] h-[8.5rem] rounded-full flex justify-center items-center bg-purple-400">
           <div className="w-[8rem] h-[8rem] rounded-full overflow-hidden bg-white p-1">
             <img
               src={image}
@@ -33,7 +33,7 @@ const Card = ({
           </div>
         </div>
         <div className="text-xl text-center">{name}</div>
-        <div className="bg-[#a58af7] py-1 px-5 text-[1.1rem] rounded-2xl text-[#EDEAFF]">
+        <div className="bg-[#b49ef5] py-1 px-5 text-[1.1rem] rounded-2xl text-[#EDEAFF]">
           {Department}
         </div>
       </div>
