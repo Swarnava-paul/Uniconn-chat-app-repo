@@ -30,8 +30,6 @@ const EditProfile = () => {
         );
         const data = await response.json();
         if (!response.ok) throw new Error("Failed to fetch user data");
-        console.log(response);
-        console.log("data", data);
         setFormData({
           CourseofStream: data.data.CourseofStream,
           Department: data.data.Department,
@@ -116,16 +114,19 @@ const EditProfile = () => {
     }
 
     try {
-      await fetch(`${process.env.VITE_BACKEND_URL}/api/v1/update/profile`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          profilePic: profilePicUrl,
-        }),
-      });
+      await fetch(
+        `${process.env.VITE_BACKEND_URL}/api/v1/user/update/profile`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            profilePic: profilePicUrl,
+          }),
+        }
+      );
       setIsEditing(false);
       console.log("Profile updated successfully");
     } catch (error) {
