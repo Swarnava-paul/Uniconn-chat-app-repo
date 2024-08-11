@@ -247,7 +247,7 @@ const Chat = () => {
         <>
           <div
             ref={chatListRef}
-            className={`w-full md:w-1/3 p-5 bg-gray-200 ${
+            className={`w-full md:w-1/3 p-5 min-h-screen bg-gray-200 ${
               mentorId ? "hidden md:block" : ""
             } overflow-y-auto no-scrollbar`}
           >

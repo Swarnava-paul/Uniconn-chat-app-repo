@@ -36,6 +36,12 @@ const Navbar = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(e); // Trigger search on Enter key press
+    }
+  };
+
   const handleInputChangeAndFetchCollege = async (e) => {
     try {
       const value = e.target.value;
@@ -59,7 +65,8 @@ const Navbar = () => {
 
   const handleResultClick = (college) => {
     setSearchTerm(college.name); // Update input value with selected college name
-    setIsSearchFocused(false); // Close the dropdown
+    setIsSearchFocused(false);
+    navigate(`/user/search/${college.name}`); // Close the dropdown
   };
 
   const handleResultHover = (college) => {
@@ -149,6 +156,7 @@ const Navbar = () => {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Search college name..."
             required
+            onKeyDown={handleKeyDown}
             onChange={handleInputChangeAndFetchCollege}
             onFocus={handleInputFocus}
             value={searchTerm}
