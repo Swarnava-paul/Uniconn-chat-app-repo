@@ -65,7 +65,7 @@ const Home = () => {
         <img
           src="/images/background.png"
           alt="background image"
-          className=" inset-0 h-[70%] object-cover opacity-[1] z-10"
+          className=" inset-0  vsm:h-[50%] md:h-[70%] object-cover opacity-[1] z-10"
         />
         <div className="bg-purple-400 rounded-full w-[22rem] h-[22rem] -z-1 absolute bottom-2 "></div>
         <div className="absolute z-10 text-7xl top-[2rem] font-bold text-center text-black">

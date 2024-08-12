@@ -162,11 +162,11 @@ const Navbar = () => {
             value={searchTerm}
           />
           {isSearchFocused && searchResults.length > 0 && (
-            <ul className="absolute left-0 bg-white border border-gray-300 w-full mt-2 rounded-lg shadow-lg z-10 text-black max-h-60 overflow-y-auto">
+            <ul className="absolute left-0 bg-white border border-gray-300 w-full mt-2 rounded-lg shadow-lg z-20 text-black max-h-60 overflow-y-auto opacity-[0.9]">
               {searchResults.map((college) => (
                 <li
                   key={college._id}
-                  className="p-2 hover:bg-gray-200 cursor-pointer"
+                  className="p-2 hover:bg-gray-200 cursor-pointer z-20"
                   onMouseEnter={() => handleResultHover(college)}
                   onClick={() => handleResultClick(college)}
                 >
