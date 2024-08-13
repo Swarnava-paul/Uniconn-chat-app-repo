@@ -92,12 +92,12 @@ const Navbar = () => {
 
   return (
     <div className="navbar w-full bg-white px-5 py-1 pr-5 gap-1 relative shadow-sm">
-      <div className="navbar-start vsm:hidden md:flex mr-[1.5rem] md:min-w-10">
+      <div className=" vsm:hidden md:flex mr-[1.5rem] md:min-w-10 md:max-w-[12rem]">
         <Link to="/">
           <img src="/images/Logo.svg" alt="logo" className="w-[7rem]" />
         </Link>
       </div>
-      <div className="navbar-center flex items-center w-[70%] max-w-[30rem] mx-auto relative">
+      <div className="flex items-center w-[70%] max-w-[30rem] mx-auto relative">
         <label htmlFor="simple-search" className="sr-only">
           Search
         </label>
@@ -199,7 +199,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      <div className="navbar-end flex justify-center items-center">
+      <div className="flex justify-center items-center">
         <div className="lg:hidden">
           {!isMenu ? (
             <svg
@@ -255,6 +255,14 @@ const Navbar = () => {
                   My Account
                 </div>
               )}
+              {user && (
+                <div
+                  className=" flex justify-center cursor-pointer items-center w-full hover:rounded-full text-black hover:bg-purple-500 font-bold py-2 px-4"
+                  onClick={() => navigate("/chat")}
+                >
+                  My Chat
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -295,6 +303,28 @@ const Navbar = () => {
               />
             </svg>
             <span>My Account</span>
+          </button>
+        )}
+        {user && (
+          <button
+            className="lg:flex hidden items-center bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded-full mx-4 font-bold"
+            onClick={() => navigate("/chat")}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="2em"
+              height="2em"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M5 18v3.766l1.515-.909L11.277 18H16c1.103 0 2-.897 2-2V8c0-1.103-.897-2-2-2H4c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2zM4 8h12v8h-5.277L7 18.234V16H4z"
+              />
+              <path
+                fill="currentColor"
+                d="M20 2H8c-1.103 0-2 .897-2 2h12c1.103 0 2 .897 2 2v8c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2"
+              />
+            </svg>
           </button>
         )}
       </div>
