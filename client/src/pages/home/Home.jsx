@@ -21,7 +21,8 @@ const Home = () => {
       try {
         setMentorLoading(true);
         const res = await fetch(
-          `${process.env.VITE_BACKEND_URL}/api/v1/user?page=${mentorpage}&limit=${mentorlimit}`,
+          // eslint-disable-next-line no-undef
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/user?page=${mentorpage}&limit=${mentorlimit}`,
           { credentials: "include" }
         );
         const data = await res.json();
@@ -40,7 +41,7 @@ const Home = () => {
       try {
         setCollegeLoading(true);
         const res = await fetch(
-          `${process.env.VITE_BACKEND_URL}/api/v1/colleges?page=${collegepage}&limit=${collegelimit}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/colleges?page=${collegepage}&limit=${collegelimit}`
         );
         const data = await res.json();
         setCollegeLoading(false);

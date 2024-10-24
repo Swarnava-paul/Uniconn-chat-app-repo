@@ -1,6 +1,6 @@
-import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDB from "./db/index.js";
@@ -17,6 +17,7 @@ app.use(
       "http://localhost:5173",
       "https://uniconn-chat-app-repo.vercel.app",
       "https://uniconn.co.in",
+      "*"
     ],
     credentials: true,
   })
@@ -26,7 +27,7 @@ app.use(express.json({}));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const port = process.env.PORT || 3000;
+//const port = process.env.PORT || 3000;
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/messages", messageRoutes);
@@ -48,14 +49,21 @@ const __dirname = path.resolve();
 //   });
 // }
 
-app.use(express.static(path.join(__dirname, "client", "dist")));
+//app.use(express.static(path.join(__dirname, "client", "dist")));
 
-app.get("*", (req, res) => {
+/*app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+});*/
+
+
+
+httpServer.listen(process.env.PORT || 3000, async() => {
+  await connectDB();
+  console.log(`server is started on port ${process.env.PORT || 3000}`);
 });
 
-connectDB();
 
-httpServer.listen(port, () => {
-  console.log("server is starting...");
-});
+
+//
+
+

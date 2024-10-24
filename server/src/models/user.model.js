@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     college: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "College",
+      type: String,
+      //ref: "College",
       required: true,
     },
     CourseofStream: {
@@ -58,8 +58,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    social_links : {
+      youtube : {type : String , default : ''},
+      instagram : {type : String , default : ''},
+      linkedin : {type : String , default : ''}
+    },
+    isUserSuggested : {type : Boolean , default : false}
   },
-  { timestamps: true }
+  { timestamps: true , versionKey : false}
 );
 
 const User = mongoose.model("User", userSchema);

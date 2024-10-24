@@ -9,17 +9,25 @@ import {
   fetchUserDetailsByIdForChatsByParam,
   fetchUsersWithPagination,
   RequestMentorSendEmail,
+  suggestedUsers
 } from "../controllers/user.controller.js";
 import verifyToken from "../middlewares/verifyJwt.js";
 
-const router = express.Router();
-router.get("/", fetchUsersWithPagination);
-router.get("/chat", verifyToken, fetchUserChatsforSideBar);
-router.get("/search/:name", fetchUserByName);
-router.get("/sample", fetchAllUsers);
-router.get("/find/profile", verifyToken, fetchUserDetailsById);
-router.get("/:id", fetchUserDetailsByIdForChatsByParam);
-router.get("/get/:id", fetchMentorsByCollegeName);
-router.post("/request-mentor", RequestMentorSendEmail);
 
-export default router;
+const userRoutes = express.Router();
+
+
+userRoutes.get("/", fetchUsersWithPagination);
+userRoutes.get('/suggestedUsers',suggestedUsers);
+userRoutes.get("/chat", verifyToken, fetchUserChatsforSideBar);
+userRoutes.get("/search/:name", fetchUserByName);
+userRoutes.get("/sample", fetchAllUsers);
+userRoutes.get("/find/profile", verifyToken, fetchUserDetailsById);
+userRoutes.get("/:id", fetchUserDetailsByIdForChatsByParam);
+userRoutes.get("/get/:id", fetchMentorsByCollegeName);
+userRoutes.post("/request-mentor", RequestMentorSendEmail);
+
+
+
+
+export default userRoutes;

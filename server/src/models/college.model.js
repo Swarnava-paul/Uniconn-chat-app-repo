@@ -20,8 +20,8 @@ const collegeSchema = new mongoose.Schema({
     type: String,
     default:
       "https://cdn.pixabay.com/photo/2017/09/01/13/56/university-2704306_640.jpg",
-  },
-});
+  }
+},{versionKey:false});
 
 const College = mongoose.model("College", collegeSchema);
 export default College;

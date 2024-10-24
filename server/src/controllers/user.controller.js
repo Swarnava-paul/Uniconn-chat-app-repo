@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import College from "../models/college.model.js";
 import jwt from "jsonwebtoken";
 import { transporter, sendEmail } from "../services/EmailService/sendEmail.js";
+import Cache from "../modules/cache.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -84,11 +85,11 @@ export const fetchMentorsByCollegeName = async (req, res) => {
     const college = req.params.id.trim();
     const re = new RegExp(`^${college}$`, "i");
 
-    const CollegeId = await College.findOne({ name: { $regex: re } }).select(
+    const {_id} = await College.findOne({ name: { $regex: re } }).select(
       "_id"
     );
-
-    if (!CollegeId) {
+    const CollegeId = _id.toString();
+    if (!_id) {
       return res.status(404).json({ message: "College not found", data: [] });
     }
     filter.college = CollegeId;
@@ -99,8 +100,6 @@ export const fetchMentorsByCollegeName = async (req, res) => {
       .limit(limitNumber)
       .select("-password -refreshToken");
 
-    const currentPage = pageNumber;
-
     if (mentors.length === 0) {
       return res.status(200).json({ message: "No mentors present", data: [] });
     }
@@ -108,7 +107,7 @@ export const fetchMentorsByCollegeName = async (req, res) => {
     res.status(200).json({
       data: mentors,
       totalCount,
-      currentPage,
+      pageNumber,
       totalPages: Math.ceil(totalCount / limitNumber),
     });
   } catch (error) {
@@ -150,6 +149,7 @@ export const fetchUserByCollegeName = async (req, res) => {
     const CollegeId = await College.findOne({ name: { $regex: re } }).select(
       "_id"
     );
+
     if (!CollegeId) {
       return res.status(404).json({ message: "College not found", data: [] });
     }
@@ -158,14 +158,14 @@ export const fetchUserByCollegeName = async (req, res) => {
       .skip(pageNumber * limitNumber)
       .limit(limitNumber)
       .select("-password -refreshToken");
-    const currentPage = pageNumber;
+    //const currentPage = pageNumber;
     if (mentors.length === 0) {
       return res.status(200).json({ message: "No mentors present", data: [] });
     }
     res.status(200).json({
       data: mentors,
       totalCount,
-      currentPage,
+      pageNumber,
       totalPages: Math.ceil(totalCount / limitNumber),
     });
   } catch (error) {
@@ -224,3 +224,39 @@ export const RequestMentorSendEmail = async (req, res) => {
     res.status(500).json(err.message);
   }
 };
+
+
+
+export const suggestedUsers = async (req,res) => {
+  try{
+    const cache = new Cache();
+    const checkIfKeyExist = cache.isKeyExists('suggestedUsers');
+
+    if (checkIfKeyExist == true) {
+      const users = cache.getValue('suggestedUsers');
+      return res.status(200).json({message:"Users Found",
+        Response : true,
+        foundUsersCount : users.length,
+        suggestedUsers : users
+      }); // if users found
+
+    }else {
+
+      const aggregationStages = [{$match:{isUserSuggested:true}},
+        {$project:{refreshToken:0,coins:0,password:0,phone:0,}}];
+    
+        const users = await User.aggregate(aggregationStages);
+        cache.setKeyAndValue('suggestedUsers',users);
+        
+        return res.status(200).json({message:"Users Found",
+          Response : true,
+          foundUsersCount : users.length,
+          suggestedUsers : users
+        });    
+    }
+
+  }catch(error) {
+    console.log(error);
+    res.status(500).json({message:"Internal Server Error"});
+  }
+}
